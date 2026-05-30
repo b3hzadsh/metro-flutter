@@ -25,3 +25,6 @@ class GetOfflineRouteRequested extends MetroRoutingEvent {
   @override
   List<Object?> get props => [startStation, endStation];
 }
+
+/// رویداد درخواست بارگذاری لیست ایستگاه‌ها برای فیلدهای جستجو
+class LoadStationsListRequested extends MetroRoutingEvent {}

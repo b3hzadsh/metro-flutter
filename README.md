@@ -42,6 +42,7 @@
 * نصب بودن Dart SDK
 
 ### ۲. دریافت کدها
-```bash
-git clone [https://github.com/your-username/tehran-metro-routing.git](https://github.com/your-username/tehran-metro-routing.git)
-cd tehran-metro-routing
+
+git clone [https://github.com/b3hzadsh/metro-flutter.git](https://github.com/b3hzadsh/metro-flutter.git)
+
+cd metro-flutter

@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 // فایل تولید شده توسط ObjectBox (نام این فایل ثابت است)
+import 'features/metro_routing/domain/usecases/get_available_stations.dart';
 import 'objectbox.g.dart';
 
 // ایمپورت‌های پروژه
@@ -39,14 +40,19 @@ Future<void> init() async {
   // ۲. ویژگی‌ها (Features) - مسیر یابی مترو
   // ==========================================
 
-  // BLoC
+  // --- BLoC ---
   sl.registerFactory(
-    () => MetroRoutingBloc(getOfflineMetroRoute: sl(), updateMetroGraph: sl()),
+    () => MetroRoutingBloc(
+      getOfflineMetroRoute: sl(),
+      updateMetroGraph: sl(),
+      getAvailableStations: sl(), // <--- اضافه شد
+    ),
   );
 
   // Use Cases
   sl.registerLazySingleton(() => GetMetroRoute(sl()));
   sl.registerLazySingleton(() => UpdateMetroGraph(sl()));
+  sl.registerLazySingleton(() => GetAvailableStations(sl())); // <--- اضافه شد
   // نکته: یوزکیس UpdateMetroGraph را پس از ساخت، در اینجا اضافه خواهیم کرد
 
   // Repository

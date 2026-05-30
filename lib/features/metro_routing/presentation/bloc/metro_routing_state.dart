@@ -46,3 +46,6 @@ class MetroRoutingError extends MetroRoutingState {
   @override
   List<Object?> get props => [message];
 }
+
+class StationsListLoaded
+    extends MetroRoutingState {} // وضعیت خالی فقط برای اطلاع به UI
