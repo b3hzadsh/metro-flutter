@@ -37,21 +37,25 @@ class _MetroRoutingForm extends StatefulWidget {
 }
 
 class _MetroRoutingFormState extends State<_MetroRoutingForm> {
-  final startStationController = TextEditingController();
-  final endStationController = TextEditingController();
+  // کنترلرهای اختصاصی که Autocomplete در اختیار ما می‌گذارد
+  TextEditingController? _startController;
+  TextEditingController? _endController;
 
   @override
-  void dispose() {
-    startStationController.dispose();
-    endStationController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    // به محض باز شدن صفحه، از BLoC می‌خواهیم لیست ایستگاه‌ها را از دیتابیس لود کند
+    context.read<MetroRoutingBloc>().add(LoadStationsListRequested());
   }
 
   void _submitRouting() {
     FocusScope.of(context).unfocus(); // بستن کیبورد
-    final start = startStationController.text.trim();
-    final end = endStationController.text.trim();
 
+    final start = _startController?.text.trim() ?? '';
+    final end = _endController?.text.trim() ?? '';
+    final bloc = context.read<MetroRoutingBloc>();
+
+    // اعتبارسنجی ۱: خالی نبودن
     if (start.isEmpty || end.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('لطفاً مبدا و مقصد را وارد کنید.')),
@@ -59,21 +63,105 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
       return;
     }
 
-    context.read<MetroRoutingBloc>().add(
-      GetOfflineRouteRequested(startStation: start, endStation: end),
-    );
+    // اعتبارسنجی ۲: اجبار به انتخاب از لیست (کاربر نتواند متن الکی تایپ کند)
+    if (!bloc.availableStations.contains(start) ||
+        !bloc.availableStations.contains(end)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('لطفاً ایستگاه را از لیست پیشنهادی انتخاب کنید.'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    bloc.add(GetOfflineRouteRequested(startStation: start, endStation: end));
   }
 
   void _updateGraph() {
     context.read<MetroRoutingBloc>().add(UpdateGraphRequested());
   }
 
+  // یک متد سازنده برای تولید فیلدهای هوشمند (برای جلوگیری از تکرار کد)
+  Widget _buildAutocompleteField({
+    required String label,
+    required IconData icon,
+    required Color iconColor,
+    required List<String> options,
+    required Function(TextEditingController) onControllerReady,
+  }) {
+    return Autocomplete<String>(
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        if (textEditingValue.text.isEmpty)
+          return const Iterable<String>.empty();
+
+        // جستجو در ایستگاه‌ها (بدون حساسیت به فاصله)
+        return options.where((String option) {
+          return option.contains(textEditingValue.text.trim());
+        });
+      },
+      // طراحی فیلد متنی اصلی
+      fieldViewBuilder:
+          (context, textEditingController, focusNode, onFieldSubmitted) {
+            // پاس دادن کنترلر به متغیرهای استیت ما برای استفاده در دکمه سابمیت
+            onControllerReady(textEditingController);
+
+            return TextField(
+              controller: textEditingController,
+              focusNode: focusNode,
+              decoration: InputDecoration(
+                labelText: label,
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                prefixIcon: Icon(icon, color: iconColor),
+              ),
+            );
+          },
+      // طراحی منوی کشویی که باز می‌شود
+      optionsViewBuilder: (context, onSelected, options) {
+        return Align(
+          alignment: Alignment.topRight,
+          child: Material(
+            elevation: 4.0,
+            borderRadius: BorderRadius.circular(12),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 250, maxWidth: 350),
+              child: ListView.separated(
+                padding: EdgeInsets.zero,
+                itemCount: options.length,
+                separatorBuilder: (context, index) => const Divider(height: 1),
+                itemBuilder: (BuildContext context, int index) {
+                  final String option = options.elementAt(index);
+                  return ListTile(
+                    title: Text(
+                      option,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    onTap: () => onSelected(
+                      option,
+                    ), // با کلیک کاربر، متن در فیلد پر می‌شود
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // گرفتن لیست آپدیت شده از BLoC
+    final stationsList = context.watch<MetroRoutingBloc>().availableStations;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // هدر صفحه و دکمه آپدیت
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -82,7 +170,6 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
-                letterSpacing: -0.5,
                 color: Color(0xFF2D3748),
               ),
             ),
@@ -96,37 +183,24 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
         ),
         const SizedBox(height: 32),
 
-        // فیلدهای ورودی با طراحی فلت و مهندسی
-        TextField(
-          controller: startStationController,
-          decoration: InputDecoration(
-            labelText: 'ایستگاه مبدا (مثال: تجریش)',
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            prefixIcon: const Icon(Icons.trip_origin, color: Colors.blueGrey),
-          ),
+        // استفاده از ویجت‌های هوشمند ساخته شده
+        _buildAutocompleteField(
+          label: 'ایستگاه مبدا',
+          icon: Icons.trip_origin,
+          iconColor: Colors.blueGrey,
+          options: stationsList,
+          onControllerReady: (controller) => _startController = controller,
         ),
         const SizedBox(height: 16),
-        TextField(
-          controller: endStationController,
-          decoration: InputDecoration(
-            labelText: 'ایستگاه مقصد (مثال: دروازه دولت)',
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            prefixIcon: const Icon(Icons.location_on, color: Colors.redAccent),
-          ),
+        _buildAutocompleteField(
+          label: 'ایستگاه مقصد',
+          icon: Icons.location_on,
+          iconColor: Colors.redAccent,
+          options: stationsList,
+          onControllerReady: (controller) => _endController = controller,
         ),
         const SizedBox(height: 24),
 
-        // دکمه اصلی مسیریابی
         ElevatedButton(
           onPressed: _submitRouting,
           style: ElevatedButton.styleFrom(
@@ -144,7 +218,6 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
           ),
         ),
         const SizedBox(height: 32),
-
         // BlocConsumer برای گوش دادن به رویدادها و ساخت UI
         Expanded(
           child: BlocConsumer<MetroRoutingBloc, MetroRoutingState>(
