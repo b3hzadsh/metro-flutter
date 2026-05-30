@@ -137,9 +137,9 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ github.ref_name }}
-          name: "قفل بان ${{ github.ref_name }}"
+          name: "مسیریاب مترو تهران ${{ github.ref_name }}"
           body: |
-            قفل بان منتشر شد!
+            مسیریاب مترو تهران منتشر شد!
 
             دانلود برای اندروید:
             • فایل AAB (برای گوگل پلی و مایکت)
