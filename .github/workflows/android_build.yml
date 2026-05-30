@@ -1,0 +1,64 @@
+name: Flutter Android Production Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # امکان اجرای دستی اکشن از طریق پنل گیتهاب
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ۱. دریافت آخرین کدهای مخزن
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # ۲. راه اندازی نسخه پایدار جاوا (مورد نیاز برای گریدل و اندروید)
+      - name: Set up Java Environment
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle' # فعالسازی کش گریدل برای افزایش سرعت بیلدهای بعدی
+
+      # ۳. راه اندازی فریم ورک فلاتر
+      - name: Set up Flutter Environment
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true # فعالسازی کش فلاتر برای دپندنس ها
+
+      # ۴. دریافت پکیجها و وابستگیهای پروژه
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # ۵. تولید کدهای خودکار و ساختارهای دیتابیس لوکال پیش از کامپایل
+      - name: Generate Required Code Artifacts
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      # ۶. بیلد نسخه Android App Bundle (AAB) برای گوگل پلی
+      - name: Build Android App Bundle (AAB)
+        run: flutter build appbundle --release
+
+      # ۷. بیلد نسخه های تفکیکشده APK بر اساس معماری پردازندهها (Split APKs)
+      - name: Build Split APKs
+        run: flutter build apk --split-per-abi --release
+
+      # ۸. آپلود و ذخیره سازی فایل AAB در بخش Artifacts گیتهاب
+      - name: Upload AAB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-appbundle-release
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 7 # مدت زمان ماندگاری فایل در گیتهاب (قابل تغییر)
+
+      # ۹. آپلود و ذخیره سازی تمامی APKهای تفکیکشده
+      - name: Upload Split APKs Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-split-apks-release
+          path: build/app/outputs/flutter-apk/app-*.apk
+          retention-days: 7
