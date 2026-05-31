@@ -25,7 +25,8 @@ class MetroRepositoryImpl implements MetroRepository {
   Future<Either<Failure, MetroGraph>> getMetroGraph() async {
     try {
       // فقط از دیتابیس لوکال می‌خواند (کاملاً آفلاین)
-      final localGraph = await localDataSource.getMetroGraph();
+      // final localGraph = await localDataSource.getMetroGraph();
+      final localGraph = await localDataSource.getLastMetroGraph();
       return Right(localGraph);
     } on CacheException {
       // اگر دیتابیس خالی بود (اجرای اول برنامه)
@@ -37,22 +38,29 @@ class MetroRepositoryImpl implements MetroRepository {
 
   @override
   Future<Either<Failure, void>> updateMetroGraph() async {
-    // ۱. بررسی اتصال اینترنت
+    print('🔵 DEBUG [Repository]: بررسی اتصال اینترنت...');
     if (await networkInfo.hasConnection) {
       try {
-        // ۲. دریافت گراف جدید از سرور
-        // (فرض میکنیم متدی به نام downloadGraph به MetroRemoteDataSource اضافه کرده‌ایم)
-        final remoteGraph = await remoteDataSource.downloadGraph();
+        print('🔵 DEBUG [Repository]: دستگاه آنلاین است. فراخوانی دانلود...');
+        final remoteMetroGraph = await remoteDataSource.downloadGraph();
 
-        // ۳. ذخیره در ObjectBox
-        await localDataSource.cacheMetroGraph(remoteGraph);
+        print(
+          '🔵 DEBUG [Repository]: دانلود موفق. تلاش برای کش در ObjectBox...',
+        );
+        await localDataSource.cacheMetroGraph(remoteMetroGraph);
 
-        // موفقیت (خروجی خاصی نیاز نیست، پس Right(null) یا Right(unit) در dartz)
+        print('🟢 DEBUG [Repository]: کش کردن در دیتابیس با موفقیت انجام شد!');
         return const Right(null);
       } on ServerException {
         return const Left(RoutingFailure('خطا در دریافت اطلاعات از سرور.'));
+      } catch (e) {
+        // این بلاک کمک می‌کند خطاهای مربوط به ObjectBox را ببینیم
+        print('🔴 FATAL [Repository ObjectBox Error]: خطا در ذخیره‌سازی محلی.');
+        print('خطا: $e');
+        return const Left(RoutingFailure('خطای داخلی در پردازش اطلاعات.'));
       }
     } else {
+      print('🔴 DEBUG [Repository]: دستگاه آفلاین است.');
       return const Left(
         RoutingFailure('برای آپدیت نقشه به اینترنت نیاز دارید.'),
       );

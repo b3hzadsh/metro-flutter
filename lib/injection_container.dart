@@ -70,8 +70,8 @@ Future<void> init() async {
   );
 
   // توجه کنید که Box از طریق Service Locator (sl) به دیتاسورس تزریق می‌شود
-  sl.registerLazySingleton<MetroLocalDataSource>(
-    () => MetroLocalDataSourceImpl(graphBox: sl()),
+sl.registerLazySingleton<MetroLocalDataSource>(
+    () => MetroLocalDataSourceImpl(store: sl()), // کلمه graphBox به store تغییر کرد
   );
 
   // ==========================================

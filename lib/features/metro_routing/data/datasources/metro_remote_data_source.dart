@@ -1,44 +1,75 @@
 // مسیر: lib/features/metro_routing/data/datasources/metro_remote_data_source.dart
 
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import '../../../../core/error/exceptions.dart';
 import '../models/metro_graph_model.dart';
 
-// ۱. قرارداد (Interface): تعریف کلاسی که بقیه قرار است آن را پیاده‌سازی کنند
 abstract class MetroRemoteDataSource {
-  /// دریافت فایل کامل گراف شبکه مترو از سرور
+  /// دانلود آخرین نسخه گراف و دیکشنری فارسی مترو از سرور
   Future<MetroGraphModel> downloadGraph();
 }
 
-// ۲. پیاده‌سازی (Implementation): کلاسی که کد واقعی ارتباط با شبکه را دارد
 class MetroRemoteDataSourceImpl implements MetroRemoteDataSource {
   final Dio dio;
+
+  // لینک اختصاصی و مستقیم GitHub Gist حاوی فایل حاوی اسامی فارسی و اتصالات گراف
+  static const String url =
+      'https://gist.github.com/b3hzadsh/9cc5e93cee99da4cb044f567c778c540/raw/86c3e2a4da6ebfbb9bb56e9d201eecb1180c4cc6/metro_graph.json';
 
   MetroRemoteDataSourceImpl({required this.dio});
 
   @override
   Future<MetroGraphModel> downloadGraph() async {
-    // آدرس فرضی API شما که JSON گراف کل مترو را برمی‌گرداند
-    const url =
-        'https://gist.github.com/b3hzadsh/9cc5e93cee99da4cb044f567c778c540/raw/86c3e2a4da6ebfbb9bb56e9d201eecb1180c4cc6/metro_graph.json';
-
     try {
-      final response = await dio.get(
-        url,
-        options: Options(headers: {'Content-Type': 'application/json'}),
-      );
+      print('🔵 DEBUG [DataSource]: شروع درخواست به سرور...');
+
+      final response = await dio.get(url);
 
       if (response.statusCode == 200) {
-        // داده‌ها (response.data) به صورت خودکار توسط Dio از JSON پارس می‌شوند
-        return MetroGraphModel.fromJson(response.data);
+        print('🟢 DEBUG [DataSource]: پاسخ سرور دریافت شد. وضعیت: 200');
+
+        Map<String, dynamic> jsonMap;
+
+        // هندل کردن تفاوت هدرهای سرور (رشته خام متنی یا دیتای ساختاریافته)
+        if (response.data is String) {
+          print(
+            '🔵 DEBUG [DataSource]: تشخیص فرمت متنی خام (String). در حال رمزگشایی با استاندارد UTF-8...',
+          );
+          jsonMap =
+              json.decode(response.data as String) as Map<String, dynamic>;
+        } else if (response.data is Map) {
+          print('🔵 DEBUG [DataSource]: تشخیص فرمت ساختاریافته (Map).');
+          jsonMap = response.data as Map<String, dynamic>;
+        } else {
+          throw ServerException();
+        }
+
+        print(
+          '🔵 DEBUG [DataSource]: در حال پارس کردن JSON به مدل ObjectBox...',
+        );
+        final model = MetroGraphModel.fromJson(jsonMap);
+
+        print('🟢 DEBUG [DataSource]: تبدیل به مدل با موفقیت انجام شد.');
+        return model;
       } else {
+        print(
+          '🔴 FATAL [DataSource]: سرور پاسخ نامعتبر داد. کد وضعیت: ${response.statusCode}',
+        );
         throw ServerException();
       }
-    } on DioException {
-      // مدیریت خطاهای اختصاصی اینترنت و تایم‌اوت در Dio
+    } on DioException catch (e) {
+      print('🔴 FATAL [Dio Network Error]: خطای ارتباطی Dio.');
+      print('نوع خطا: ${e.type}');
+      print('پیام خطا: ${e.message}');
+      if (e.response != null) {
+        print('دیتای خطای دریافتی از سرور: ${e.response?.data}');
+      }
       throw ServerException();
-    } catch (e) {
-      // مدیریت خطاهایی مثل مشکل در پارس کردن JSON
+    } catch (e, stackTrace) {
+      print('🔴 FATAL [JSON Parse Error]: خطا در تبدیل داده به مدل.');
+      print('دلیل خطا: $e');
+      print('Stack: $stackTrace');
       throw ServerException();
     }
   }
