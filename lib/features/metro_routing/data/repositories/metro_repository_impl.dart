@@ -24,16 +24,12 @@ class MetroRepositoryImpl implements MetroRepository {
   @override
   Future<Either<Failure, MetroGraph>> getMetroGraph() async {
     try {
-      // ۱. دریافت مدل از ObjectBox
       final localGraphModel = await localDataSource.getLastMetroGraph();
 
-      // ۲. تبدیل صریح مدل دیتابیس به موجودیت Domain (لایه هسته)
       final metroGraph = MetroGraph(
         nodes: localGraphModel.nodes,
         stationsFa: localGraphModel.stationsFa,
-        stationsLines:
-            localGraphModel.stationsLines, // 👈 فیلد جدید پاس داده می‌شود
-        // مدیریت تبدیل تاریخ از متن به شیء DateTime
+        stationsLines: localGraphModel.stationsLines,
         lastUpdated:
             DateTime.tryParse(localGraphModel.lastUpdated) ?? DateTime.now(),
       );
@@ -62,7 +58,6 @@ class MetroRepositoryImpl implements MetroRepository {
       } on ServerException {
         return const Left(RoutingFailure('خطا در دریافت اطلاعات از سرور.'));
       } catch (e) {
-        // این بلاک کمک می‌کند خطاهای مربوط به ObjectBox را ببینیم
         print('🔴 FATAL [Repository ObjectBox Error]: خطا در ذخیره‌سازی محلی.');
         print('خطا: $e');
         return const Left(RoutingFailure('خطای داخلی در پردازش اطلاعات.'));

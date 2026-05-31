@@ -6,14 +6,12 @@ import '../../../../core/error/exceptions.dart';
 import '../models/metro_graph_model.dart';
 
 abstract class MetroRemoteDataSource {
-  /// دانلود آخرین نسخه گراف و دیکشنری فارسی مترو از سرور
   Future<MetroGraphModel> downloadGraph();
 }
 
 class MetroRemoteDataSourceImpl implements MetroRemoteDataSource {
   final Dio dio;
 
-  // لینک اختصاصی و مستقیم GitHub Gist حاوی فایل حاوی اسامی فارسی و اتصالات گراف
   static const String url =
       'https://gist.githubusercontent.com/b3hzadsh/9cc5e93cee99da4cb044f567c778c540/raw/18a81f1ab8043ec30e783732708a50d72d287383/metro_graph.json';
 
@@ -31,7 +29,6 @@ class MetroRemoteDataSourceImpl implements MetroRemoteDataSource {
 
         Map<String, dynamic> jsonMap;
 
-        // هندل کردن تفاوت هدرهای سرور (رشته خام متنی یا دیتای ساختاریافته)
         if (response.data is String) {
           print(
             '🔵 DEBUG [DataSource]: تشخیص فرمت متنی خام (String). در حال رمزگشایی با استاندارد UTF-8...',

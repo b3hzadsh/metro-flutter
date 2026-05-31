@@ -32,20 +32,13 @@ class GetOfflineMetroRoute {
       }
 
       final nodes = graph.nodes;
-      final stationsLines =
-          graph.stationsLines; // 👈 انتقال به بالا برای استفاده در الگوریتم
+      final stationsLines = graph.stationsLines;
       final stationsFa = graph.stationsFa;
-
-      // =========================================================
-      // الگوریتم دایجسترای هوشمند (Line-Aware Dijkstra)
-      // =========================================================
       final distances = <String, int>{};
       final previous = <String, String>{};
-      final arrivedOnLine =
-          <String, int>{}; // 👈 ردیابی اینکه با چه خطی به ایستگاه رسیدیم
+      final arrivedOnLine = <String, int>{};
       final unvisited = nodes.keys.toList();
 
-      // ⏱️ جریمه زمانی برای تعویض خط (۸ دقیقه)
       const int TRANSFER_PENALTY = 8;
 
       for (var node in nodes.keys) {
@@ -64,17 +57,15 @@ class GetOfflineMetroRoute {
         final neighbors = nodes[currentNode] ?? {};
         for (var neighbor in neighbors.keys) {
           if (unvisited.contains(neighbor)) {
-            // ۱. پیدا کردن خطوط مشترک بین ایستگاه فعلی و ایستگاه بعدی
             final currentLines = stationsLines[currentNode] ?? [];
             final neighborLines = stationsLines[neighbor] ?? [];
             final connectingLines = currentLines
                 .where((l) => neighborLines.contains(l))
                 .toList();
 
-            int edgeCost = neighbors[neighbor]!; // هزینه پیش‌فرض (۲ دقیقه)
+            int edgeCost = neighbors[neighbor]!;
             int selectedLineForMove = 0;
 
-            // ۲. محاسبه جریمه تعویض خط
             if (currentNode == startKey) {
               selectedLineForMove = connectingLines.isNotEmpty
                   ? connectingLines.first
@@ -82,24 +73,19 @@ class GetOfflineMetroRoute {
             } else {
               final arrivalLine = arrivedOnLine[currentNode] ?? 0;
               if (connectingLines.contains(arrivalLine)) {
-                // بدون تغییر خط (ادامه مسیر روی همان خط قبلی)
                 selectedLineForMove = arrivalLine;
               } else {
-                // 🔴 کاربر مجبور به تعویض خط است! اعمال جریمه.
                 edgeCost += TRANSFER_PENALTY;
                 selectedLineForMove = connectingLines.isNotEmpty
                     ? connectingLines.first
                     : arrivalLine;
               }
             }
-
-            // ۳. بروزرسانی فواصل با در نظر گرفتن جریمه‌ها
             final alt = distances[currentNode]! + edgeCost;
             if (alt < distances[neighbor]!) {
               distances[neighbor] = alt;
               previous[neighbor] = currentNode;
-              arrivedOnLine[neighbor] =
-                  selectedLineForMove; // ذخیره خطی که با آن حرکت کردیم
+              arrivedOnLine[neighbor] = selectedLineForMove;
             }
           }
         }
@@ -115,10 +101,6 @@ class GetOfflineMetroRoute {
         rawPath.insert(0, current);
         current = previous[current];
       }
-
-      // =========================================================
-      // پردازش ثانویه: تولید کارت‌های مسیر (RouteLeg)
-      // =========================================================
       List<RouteLeg> legs = [];
 
       if (rawPath.length > 1) {
@@ -177,11 +159,7 @@ class GetOfflineMetroRoute {
       }
 
       return Right(
-        MetroRoute(
-          legs: legs,
-          estimatedTimeMinutes:
-              distances[endKey]!, // زمان کل شامل مسیرها و جریمه‌های تعویض خط
-        ),
+        MetroRoute(legs: legs, estimatedTimeMinutes: distances[endKey]!),
       );
     });
   }

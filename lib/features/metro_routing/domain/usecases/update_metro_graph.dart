@@ -6,10 +6,7 @@ import '../repositories/metro_repository.dart';
 
 class UpdateMetroGraph {
   final MetroRepository repository;
-
   UpdateMetroGraph(this.repository);
-
-  // چون نیازی به ورودی خاصی از سمت کاربر (مثل نام ایستگاه) نداریم، متد پارامتری نمی‌گیرد
   Future<Either<Failure, void>> call() async {
     return await repository.updateMetroGraph();
   }

@@ -13,9 +13,7 @@ class GetAvailableStations {
     final result = await repository.getMetroGraph();
 
     return result.map((graph) {
-      // استخراج تمام مقادیر فارسی (Value ها) از دیکشنری
       final stations = graph.stationsFa.values.toList();
-      // حذف موارد تکراری و مرتب‌سازی الفبایی
       final uniqueStations = stations.toSet().toList()..sort();
       return uniqueStations;
     });

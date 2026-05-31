@@ -3,8 +3,8 @@
 import 'package:equatable/equatable.dart';
 
 class RouteLeg extends Equatable {
-  final int line; // شماره خطی که کاربر روی آن است
-  final List<String> stationsFa; // ایستگاه‌هایی که در این خط طی می‌کند
+  final int line;
+  final List<String> stationsFa;
 
   const RouteLeg({required this.line, required this.stationsFa});
 

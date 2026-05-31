@@ -8,9 +8,6 @@ class MetroRouteModel extends MetroRoute {
     required super.estimatedTimeMinutes,
   });
 
-  /// در صورتی که در آینده بخواهید مسیرهای جستجوشده را در تاریخچه (History) گوشی
-  /// ذخیره کنید، این متدها برای تبدیل مدل به JSON و برعکس بسیار مفید خواهند بود.
-
   factory MetroRouteModel.fromJson(Map<String, dynamic> json) {
     return MetroRouteModel(
       legs: (json['legs'] as List<dynamic>)
@@ -33,7 +30,6 @@ class MetroRouteModel extends MetroRoute {
   }
 }
 
-/// مدل کمکی برای بخش‌های سفر (RouteLeg) جهت سریالایز کردن
 class RouteLegModel extends RouteLeg {
   const RouteLegModel({required super.line, required super.stationsFa});
 

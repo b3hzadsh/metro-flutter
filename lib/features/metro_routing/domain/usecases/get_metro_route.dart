@@ -17,7 +17,6 @@ class GetMetroRoute {
     final graphResult = await repository.getMetroGraph();
 
     return graphResult.fold((failure) => Left(failure), (graph) {
-      // ۱. پیدا کردن کلیدهای انگلیسی با استفاده از Reverse Lookup
       String? startKey;
       String? endKey;
       graph.stationsFa.forEach((key, value) {
@@ -33,7 +32,6 @@ class GetMetroRoute {
         );
       }
 
-      // ۲. پیاده‌سازی الگوریتم دایجسترا (Dijkstra)
       final nodes = graph.nodes;
       final distances = <String, int>{};
       final previous = <String, String>{};
@@ -67,7 +65,6 @@ class GetMetroRoute {
         return const Left(RoutingFailure('مسیری بین این دو ایستگاه یافت نشد.'));
       }
 
-      // ۳. بازسازی مسیر خام
       final path = <String>[];
       String? current = endKey;
       while (current != null) {
@@ -75,9 +72,6 @@ class GetMetroRoute {
         current = previous[current];
       }
 
-      // =========================================================
-      // ۴. آنالیزور تعویض خط (هوشمندسازی مسیر)
-      // =========================================================
       final stationsLines = graph.stationsLines;
       final stationsFa = graph.stationsFa;
       List<RouteLeg> legs = [];
@@ -89,7 +83,6 @@ class GetMetroRoute {
         List<int> startLines = stationsLines[path[0]] ?? [];
         List<int> nextLines = stationsLines[path[1]] ?? [];
 
-        // خط مشترک بین ایستگاه اول و دوم را پیدا می‌کنیم
         int currentLine = startLines.firstWhere(
           (l) => nextLines.contains(l),
           orElse: () => startLines.isNotEmpty ? startLines.first : 0,
@@ -102,11 +95,9 @@ class GetMetroRoute {
           String currFa = stationsFa[currNode] ?? currNode;
           List<int> currLines = stationsLines[currNode] ?? [];
 
-          // اگر همچنان روی خط قبلی هستیم
           if (currLines.contains(currentLine)) {
             currentLegStations.add(currFa);
           } else {
-            // خط عوض شده است! بخش قبلی را می‌بندیم
             legs.add(
               RouteLeg(
                 line: currentLine,
@@ -114,14 +105,12 @@ class GetMetroRoute {
               ),
             );
 
-            // خط مشترک جدید را پیدا می‌کنیم
             List<int> prevLines = stationsLines[prevNode] ?? [];
             int newLine = prevLines.firstWhere(
               (l) => currLines.contains(l),
               orElse: () => currLines.isNotEmpty ? currLines.first : 0,
             );
 
-            // بخش جدید مسیر (شروع از ایستگاه تقاطعی)
             currentLine = newLine;
             currentLegStations = [prevFa, currFa];
           }
@@ -141,10 +130,7 @@ class GetMetroRoute {
       }
 
       return Right(
-        MetroRoute(
-          legs: legs, // جایگزین path شد
-          estimatedTimeMinutes: distances[endKey]!,
-        ),
+        MetroRoute(legs: legs, estimatedTimeMinutes: distances[endKey]!),
       );
     });
   }
