@@ -4,22 +4,43 @@ import '../../domain/entities/metro_route.dart';
 
 class MetroRouteModel extends MetroRoute {
   const MetroRouteModel({
-    required super.path,
+    required super.legs,
     required super.estimatedTimeMinutes,
   });
 
-  // تبدیل نقشه (Map) دریافتی از JSON به یک شیء مدل
+  /// در صورتی که در آینده بخواهید مسیرهای جستجوشده را در تاریخچه (History) گوشی
+  /// ذخیره کنید، این متدها برای تبدیل مدل به JSON و برعکس بسیار مفید خواهند بود.
+
   factory MetroRouteModel.fromJson(Map<String, dynamic> json) {
     return MetroRouteModel(
-      // تبدیل ایمن لیست داینامیک به لیست رشته‌ها
-      path: List<String>.from(json['path'] ?? []),
-      // تبدیل ایمن اعداد (جلوگیری از خطای int و double)
-      estimatedTimeMinutes: (json['estimatedTimeMinutes'] as num).toInt(),
+      legs: (json['legs'] as List<dynamic>)
+          .map(
+            (legJson) =>
+                RouteLegModel.fromJson(legJson as Map<String, dynamic>),
+          )
+          .toList(),
+      estimatedTimeMinutes: json['estimatedTimeMinutes'] as int,
     );
   }
 
-  // تبدیل شیء مدل به نقشه (برای ارسال به سرور یا ذخیره محلی در آینده)
   Map<String, dynamic> toJson() {
-    return {'path': path, 'estimatedTimeMinutes': estimatedTimeMinutes};
+    return {
+      'legs': legs.map((leg) {
+        return {'line': leg.line, 'stationsFa': leg.stationsFa};
+      }).toList(),
+      'estimatedTimeMinutes': estimatedTimeMinutes,
+    };
+  }
+}
+
+/// مدل کمکی برای بخش‌های سفر (RouteLeg) جهت سریالایز کردن
+class RouteLegModel extends RouteLeg {
+  const RouteLegModel({required super.line, required super.stationsFa});
+
+  factory RouteLegModel.fromJson(Map<String, dynamic> json) {
+    return RouteLegModel(
+      line: json['line'] as int,
+      stationsFa: List<String>.from(json['stationsFa'] as List),
+    );
   }
 }

@@ -14,97 +14,175 @@ class GetOfflineMetroRoute {
     required String startStation,
     required String endStation,
   }) async {
-    try {
-      // ۱. دریافت کل گراف شبکه از دیتابیس لوکال
-      final graphEither = await repository.getMetroGraph();
+    final graphResult = await repository.getMetroGraph();
 
-      return graphEither.fold((failure) => Left(failure), (graph) {
-        final nodes = graph.nodes;
+    return graphResult.fold((failure) => Left(failure), (graph) {
+      String? startKey;
+      String? endKey;
 
-        // اعتبارسنجی اولیه
-        if (!nodes.containsKey(startStation) ||
-            !nodes.containsKey(endStation)) {
-          return const Left(
-            RoutingFailure('ایستگاه مبدا یا مقصد در نقشه یافت نشد.'),
-          );
-        }
+      graph.stationsFa.forEach((key, value) {
+        if (value == startStation || key == startStation) startKey = key;
+        if (value == endStation || key == endStation) endKey = key;
+      });
 
-        // ==========================================
-        // شروع پیاده‌سازی الگوریتم دایجسترا (Dijkstra)
-        // ==========================================
+      if (startKey == null || endKey == null) {
+        return const Left(
+          RoutingFailure('ایستگاه مبدا یا مقصد در نقشه یافت نشد.'),
+        );
+      }
 
-        final distances = <String, int>{};
-        final previousNodes = <String, String>{};
-        final unvisited = nodes.keys.toList();
+      final nodes = graph.nodes;
+      final stationsLines =
+          graph.stationsLines; // 👈 انتقال به بالا برای استفاده در الگوریتم
+      final stationsFa = graph.stationsFa;
 
-        // الف) مقداردهی اولیه: فاصله تا همه بی‌نهایت، فاصله تا مبدا صفر
-        for (var node in nodes.keys) {
-          distances[node] = 999999; // استفاده از عدد بزرگ به جای بی‌نهایت
-        }
-        distances[startStation] = 0;
+      // =========================================================
+      // الگوریتم دایجسترای هوشمند (Line-Aware Dijkstra)
+      // =========================================================
+      final distances = <String, int>{};
+      final previous = <String, String>{};
+      final arrivedOnLine =
+          <String, int>{}; // 👈 ردیابی اینکه با چه خطی به ایستگاه رسیدیم
+      final unvisited = nodes.keys.toList();
 
-        // ب) حلقه اصلی: تا زمانی که گره ملاقات‌نشده‌ای داریم
-        while (unvisited.isNotEmpty) {
-          // پیدا کردن گرهی که کمترین فاصله را در لیست ملاقات‌نشده‌ها دارد
-          unvisited.sort((a, b) => distances[a]!.compareTo(distances[b]!));
-          final currentNode = unvisited.first;
+      // ⏱️ جریمه زمانی برای تعویض خط (۸ دقیقه)
+      const int TRANSFER_PENALTY = 8;
 
-          // اگر کمترین فاصله بی‌نهایت است، یعنی بقیه گراف در دسترس نیست
-          if (distances[currentNode] == 999999) break;
+      for (var node in nodes.keys) {
+        distances[node] = 999999;
+      }
+      distances[startKey!] = 0;
 
-          // اگر به مقصد رسیدیم، جستجو را متوقف کن (بهینه‌سازی خروج زودهنگام)
-          if (currentNode == endStation) break;
+      while (unvisited.isNotEmpty) {
+        unvisited.sort((a, b) => distances[a]!.compareTo(distances[b]!));
+        final currentNode = unvisited.first;
+        unvisited.remove(currentNode);
 
-          unvisited.remove(currentNode);
+        if (currentNode == endKey) break;
+        if (distances[currentNode] == 999999) break;
 
-          // ج) بررسی همسایه‌ها (ایستگاه‌های متصل)
-          final neighbors = nodes[currentNode] ?? {};
-          for (var neighbor in neighbors.entries) {
-            final neighborName = neighbor.key;
-            final timeToNeighbor = neighbor.value;
+        final neighbors = nodes[currentNode] ?? {};
+        for (var neighbor in neighbors.keys) {
+          if (unvisited.contains(neighbor)) {
+            // ۱. پیدا کردن خطوط مشترک بین ایستگاه فعلی و ایستگاه بعدی
+            final currentLines = stationsLines[currentNode] ?? [];
+            final neighborLines = stationsLines[neighbor] ?? [];
+            final connectingLines = currentLines
+                .where((l) => neighborLines.contains(l))
+                .toList();
 
-            // محاسبه زمان کل از مبدا تا این همسایه
-            final altDistance = distances[currentNode]! + timeToNeighbor;
+            int edgeCost = neighbors[neighbor]!; // هزینه پیش‌فرض (۲ دقیقه)
+            int selectedLineForMove = 0;
 
-            // اگر مسیر جدید سریع‌تر از مسیر قبلی است، آن را جایگزین کن
-            if (altDistance < (distances[neighborName] ?? 999999)) {
-              distances[neighborName] = altDistance;
-              // ثبت ردپا (Breadcrumb) برای اینکه بدانیم از کجا به این ایستگاه رسیدیم
-              previousNodes[neighborName] = currentNode;
+            // ۲. محاسبه جریمه تعویض خط
+            if (currentNode == startKey) {
+              selectedLineForMove = connectingLines.isNotEmpty
+                  ? connectingLines.first
+                  : (currentLines.isNotEmpty ? currentLines.first : 0);
+            } else {
+              final arrivalLine = arrivedOnLine[currentNode] ?? 0;
+              if (connectingLines.contains(arrivalLine)) {
+                // بدون تغییر خط (ادامه مسیر روی همان خط قبلی)
+                selectedLineForMove = arrivalLine;
+              } else {
+                // 🔴 کاربر مجبور به تعویض خط است! اعمال جریمه.
+                edgeCost += TRANSFER_PENALTY;
+                selectedLineForMove = connectingLines.isNotEmpty
+                    ? connectingLines.first
+                    : arrivalLine;
+              }
+            }
+
+            // ۳. بروزرسانی فواصل با در نظر گرفتن جریمه‌ها
+            final alt = distances[currentNode]! + edgeCost;
+            if (alt < distances[neighbor]!) {
+              distances[neighbor] = alt;
+              previous[neighbor] = currentNode;
+              arrivedOnLine[neighbor] =
+                  selectedLineForMove; // ذخیره خطی که با آن حرکت کردیم
             }
           }
         }
+      }
 
-        // ==========================================
-        // بازسازی مسیر (Path Reconstruction)
-        // ==========================================
+      if (distances[endKey] == 999999) {
+        return const Left(RoutingFailure('مسیری بین این دو ایستگاه یافت نشد.'));
+      }
 
-        // اگر ردپایی به مقصد وجود ندارد، یعنی مسیری نیست
-        if (!previousNodes.containsKey(endStation) &&
-            startStation != endStation) {
-          return const Left(
-            RoutingFailure('مسیری بین این دو ایستگاه یافت نشد.'),
-          );
-        }
+      final rawPath = <String>[];
+      String? current = endKey;
+      while (current != null) {
+        rawPath.insert(0, current);
+        current = previous[current];
+      }
 
-        final path = <String>[];
-        String? current = endStation;
+      // =========================================================
+      // پردازش ثانویه: تولید کارت‌های مسیر (RouteLeg)
+      // =========================================================
+      List<RouteLeg> legs = [];
 
-        // حرکت از مقصد به سمت مبدا با استفاده از ردپاها
-        while (current != null) {
-          path.insert(0, current); // اضافه کردن به ابتدای لیست
-          current = previousNodes[current];
-        }
+      if (rawPath.length > 1) {
+        String startStationFa = stationsFa[rawPath[0]] ?? rawPath[0];
+        List<String> currentLegStations = [startStationFa];
 
-        final totalEstimatedTime = distances[endStation] ?? 0;
+        List<int> startLines = stationsLines[rawPath[0]] ?? [];
+        List<int> nextLines = stationsLines[rawPath[1]] ?? [];
 
-        // بازگرداندن موجودیت مسیر (همان فرمتی که UI انتظار دارد)
-        return Right(
-          MetroRoute(path: path, estimatedTimeMinutes: totalEstimatedTime),
+        int currentLine = startLines.firstWhere(
+          (l) => nextLines.contains(l),
+          orElse: () => startLines.isNotEmpty ? startLines.first : 0,
         );
-      });
-    } catch (e) {
-      return const Left(RoutingFailure('خطای غیرمنتظره در محاسبه مسیر.'));
-    }
+
+        for (int i = 1; i < rawPath.length; i++) {
+          String prevNode = rawPath[i - 1];
+          String currNode = rawPath[i];
+
+          String prevFa = stationsFa[prevNode] ?? prevNode;
+          String currFa = stationsFa[currNode] ?? currNode;
+          List<int> currLines = stationsLines[currNode] ?? [];
+
+          if (currLines.contains(currentLine)) {
+            currentLegStations.add(currFa);
+          } else {
+            legs.add(
+              RouteLeg(
+                line: currentLine,
+                stationsFa: List.from(currentLegStations),
+              ),
+            );
+
+            List<int> prevLines = stationsLines[prevNode] ?? [];
+            int newLine = prevLines.firstWhere(
+              (l) => currLines.contains(l),
+              orElse: () => currLines.isNotEmpty ? currLines.first : 0,
+            );
+
+            currentLine = newLine;
+            currentLegStations = [prevFa, currFa];
+          }
+        }
+
+        if (currentLegStations.isNotEmpty) {
+          legs.add(RouteLeg(line: currentLine, stationsFa: currentLegStations));
+        }
+      } else {
+        legs.add(
+          RouteLeg(
+            line: (stationsLines[rawPath[0]]?.isNotEmpty ?? false)
+                ? stationsLines[rawPath[0]]!.first
+                : 0,
+            stationsFa: [stationsFa[rawPath[0]] ?? rawPath[0]],
+          ),
+        );
+      }
+
+      return Right(
+        MetroRoute(
+          legs: legs,
+          estimatedTimeMinutes:
+              distances[endKey]!, // زمان کل شامل مسیرها و جریمه‌های تعویض خط
+        ),
+      );
+    });
   }
 }

@@ -22,7 +22,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 3273020002033156455),
     name: 'MetroGraphModel',
-    lastPropertyId: const obx_int.IdUid(4, 4843341993498663357),
+    lastPropertyId: const obx_int.IdUid(6, 3236936541204478662),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -38,14 +38,20 @@ final _entities = <obx_int.ModelEntity>[
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(3, 3247178004184780167),
-        name: 'lastUpdatedData',
-        type: 10,
+        id: const obx_int.IdUid(4, 4843341993498663357),
+        name: 'stationsFaJson',
+        type: 9,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(4, 4843341993498663357),
-        name: 'stationsFaJson',
+        id: const obx_int.IdUid(5, 1283329221051978889),
+        name: 'lastUpdated',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 3236936541204478662),
+        name: 'stationsLinesJson',
         type: 9,
         flags: 0,
       ),
@@ -104,7 +110,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
     lastSequenceId: const obx_int.IdUid(0, 0),
     retiredEntityUids: const [],
     retiredIndexUids: const [],
-    retiredPropertyUids: const [],
+    retiredPropertyUids: const [3247178004184780167],
     retiredRelationUids: const [],
     modelVersion: 5,
     modelVersionParserMinimum: 5,
@@ -123,11 +129,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
       objectToFB: (MetroGraphModel object, fb.Builder fbb) {
         final nodesJsonOffset = fbb.writeString(object.nodesJson);
         final stationsFaJsonOffset = fbb.writeString(object.stationsFaJson);
-        fbb.startTable(5);
+        final lastUpdatedOffset = fbb.writeString(object.lastUpdated);
+        final stationsLinesJsonOffset = fbb.writeString(
+          object.stationsLinesJson,
+        );
+        fbb.startTable(7);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, nodesJsonOffset);
-        fbb.addInt64(2, object.lastUpdatedData.millisecondsSinceEpoch);
         fbb.addOffset(3, stationsFaJsonOffset);
+        fbb.addOffset(4, lastUpdatedOffset);
+        fbb.addOffset(5, stationsLinesJsonOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -140,20 +151,24 @@ obx_int.ModelDefinition getObjectBoxModel() {
           4,
           0,
         );
+        final lastUpdatedParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 12, '');
         final nodesJsonParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 6, '');
         final stationsFaJsonParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 10, '');
-        final lastUpdatedDataParam = DateTime.fromMillisecondsSinceEpoch(
-          const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
-        );
+        final stationsLinesJsonParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 14, '');
         final object = MetroGraphModel(
           id: idParam,
+          lastUpdated: lastUpdatedParam,
           nodesJson: nodesJsonParam,
           stationsFaJson: stationsFaJsonParam,
-          lastUpdatedData: lastUpdatedDataParam,
+          stationsLinesJson: stationsLinesJsonParam,
         );
 
         return object;
@@ -176,13 +191,18 @@ class MetroGraphModel_ {
     _entities[0].properties[1],
   );
 
-  /// See [MetroGraphModel.lastUpdatedData].
-  static final lastUpdatedData = obx.QueryDateProperty<MetroGraphModel>(
+  /// See [MetroGraphModel.stationsFaJson].
+  static final stationsFaJson = obx.QueryStringProperty<MetroGraphModel>(
     _entities[0].properties[2],
   );
 
-  /// See [MetroGraphModel.stationsFaJson].
-  static final stationsFaJson = obx.QueryStringProperty<MetroGraphModel>(
+  /// See [MetroGraphModel.lastUpdated].
+  static final lastUpdated = obx.QueryStringProperty<MetroGraphModel>(
     _entities[0].properties[3],
+  );
+
+  /// See [MetroGraphModel.stationsLinesJson].
+  static final stationsLinesJson = obx.QueryStringProperty<MetroGraphModel>(
+    _entities[0].properties[4],
   );
 }

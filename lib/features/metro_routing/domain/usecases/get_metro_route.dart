@@ -14,93 +14,138 @@ class GetMetroRoute {
     required String startStation,
     required String endStation,
   }) async {
-    try {
-      final graphEither = await repository.getMetroGraph();
+    final graphResult = await repository.getMetroGraph();
 
-      return graphEither.fold((failure) => Left(failure), (graph) {
-        final nodes = graph.nodes;
-        final stationsFa = graph.stationsFa;
+    return graphResult.fold((failure) => Left(failure), (graph) {
+      // ۱. پیدا کردن کلیدهای انگلیسی با استفاده از Reverse Lookup
+      String? startKey;
+      String? endKey;
+      graph.stationsFa.forEach((key, value) {
+        if (value == startStation || key == startStation) startKey = key;
+        if (value == endStation || key == endStation) endKey = key;
+      });
 
-        // تابع کمکی (Reverse Lookup) برای تبدیل ورودی فارسی به کلید انگلیسی
-        String resolveStationKey(String input) {
-          // اگر کاربر کلید انگلیسی را دقیق وارد کرده بود
-          if (nodes.containsKey(input)) return input;
+      if (startKey == null || endKey == null) {
+        return const Left(
+          RoutingFailure(
+            'ایستگاه مبدا یا مقصد در نقشه یافت نشد. املای آن را بررسی کنید.',
+          ),
+        );
+      }
 
-          // اگر فارسی تایپ کرده بود، کلید انگلیسی معادل را پیدا کن
-          for (var entry in stationsFa.entries) {
-            if (entry.value == input) return entry.key;
-          }
-          return input; // اگر پیدا نشد، همان ورودی را برگردان
-        }
+      // ۲. پیاده‌سازی الگوریتم دایجسترا (Dijkstra)
+      final nodes = graph.nodes;
+      final distances = <String, int>{};
+      final previous = <String, String>{};
+      final unvisited = nodes.keys.toList();
 
-        final resolvedStart = resolveStationKey(startStation);
-        final resolvedEnd = resolveStationKey(endStation);
+      for (var node in nodes.keys) {
+        distances[node] = 999999;
+      }
+      distances[startKey!] = 0;
 
-        if (!nodes.containsKey(resolvedStart) ||
-            !nodes.containsKey(resolvedEnd)) {
-          return const Left(
-            RoutingFailure(
-              'ایستگاه مبدا یا مقصد در نقشه یافت نشد. املای آن را بررسی کنید.',
-            ),
-          );
-        }
+      while (unvisited.isNotEmpty) {
+        unvisited.sort((a, b) => distances[a]!.compareTo(distances[b]!));
+        final currentNode = unvisited.first;
+        unvisited.remove(currentNode);
 
-        // --- شروع دایجسترا با کلیدهای انگلیسی ---
-        final distances = <String, int>{};
-        final previousNodes = <String, String>{};
-        final unvisited = nodes.keys.toList();
+        if (currentNode == endKey) break;
 
-        for (var node in nodes.keys) {
-          distances[node] = 999999;
-        }
-        distances[resolvedStart] = 0;
-
-        while (unvisited.isNotEmpty) {
-          unvisited.sort((a, b) => distances[a]!.compareTo(distances[b]!));
-          final currentNode = unvisited.first;
-
-          if (distances[currentNode] == 999999) break;
-          if (currentNode == resolvedEnd) break;
-
-          unvisited.remove(currentNode);
-
-          final neighbors = nodes[currentNode] ?? {};
-          for (var neighbor in neighbors.entries) {
-            final altDistance = distances[currentNode]! + neighbor.value;
-            if (altDistance < (distances[neighbor.key] ?? 999999)) {
-              distances[neighbor.key] = altDistance;
-              previousNodes[neighbor.key] = currentNode;
+        final neighbors = nodes[currentNode] ?? {};
+        for (var neighbor in neighbors.keys) {
+          if (unvisited.contains(neighbor)) {
+            final alt = distances[currentNode]! + neighbors[neighbor]!;
+            if (alt < distances[neighbor]!) {
+              distances[neighbor] = alt;
+              previous[neighbor] = currentNode;
             }
           }
         }
+      }
 
-        // --- بازسازی مسیر و ترجمه به فارسی ---
-        if (!previousNodes.containsKey(resolvedEnd) &&
-            resolvedStart != resolvedEnd) {
-          return const Left(
-            RoutingFailure('مسیری بین این دو ایستگاه یافت نشد.'),
-          );
+      if (distances[endKey] == 999999) {
+        return const Left(RoutingFailure('مسیری بین این دو ایستگاه یافت نشد.'));
+      }
+
+      // ۳. بازسازی مسیر خام
+      final path = <String>[];
+      String? current = endKey;
+      while (current != null) {
+        path.insert(0, current);
+        current = previous[current];
+      }
+
+      // =========================================================
+      // ۴. آنالیزور تعویض خط (هوشمندسازی مسیر)
+      // =========================================================
+      final stationsLines = graph.stationsLines;
+      final stationsFa = graph.stationsFa;
+      List<RouteLeg> legs = [];
+
+      if (path.length > 1) {
+        String startStationFa = stationsFa[path[0]] ?? path[0];
+        List<String> currentLegStations = [startStationFa];
+
+        List<int> startLines = stationsLines[path[0]] ?? [];
+        List<int> nextLines = stationsLines[path[1]] ?? [];
+
+        // خط مشترک بین ایستگاه اول و دوم را پیدا می‌کنیم
+        int currentLine = startLines.firstWhere(
+          (l) => nextLines.contains(l),
+          orElse: () => startLines.isNotEmpty ? startLines.first : 0,
+        );
+
+        for (int i = 1; i < path.length; i++) {
+          String prevNode = path[i - 1];
+          String currNode = path[i];
+          String prevFa = stationsFa[prevNode] ?? prevNode;
+          String currFa = stationsFa[currNode] ?? currNode;
+          List<int> currLines = stationsLines[currNode] ?? [];
+
+          // اگر همچنان روی خط قبلی هستیم
+          if (currLines.contains(currentLine)) {
+            currentLegStations.add(currFa);
+          } else {
+            // خط عوض شده است! بخش قبلی را می‌بندیم
+            legs.add(
+              RouteLeg(
+                line: currentLine,
+                stationsFa: List.from(currentLegStations),
+              ),
+            );
+
+            // خط مشترک جدید را پیدا می‌کنیم
+            List<int> prevLines = stationsLines[prevNode] ?? [];
+            int newLine = prevLines.firstWhere(
+              (l) => currLines.contains(l),
+              orElse: () => currLines.isNotEmpty ? currLines.first : 0,
+            );
+
+            // بخش جدید مسیر (شروع از ایستگاه تقاطعی)
+            currentLine = newLine;
+            currentLegStations = [prevFa, currFa];
+          }
         }
-
-        final pathFa = <String>[];
-        String? current = resolvedEnd;
-
-        while (current != null) {
-          // دریافت نام فارسی ایستگاه برای نمایش در UI
-          final faName = stationsFa[current] ?? current;
-          pathFa.insert(0, faName);
-          current = previousNodes[current];
+        if (currentLegStations.isNotEmpty) {
+          legs.add(RouteLeg(line: currentLine, stationsFa: currentLegStations));
         }
-
-        return Right(
-          MetroRoute(
-            path: pathFa, // لیست نهایی حاوی اسامی فارسی است
-            estimatedTimeMinutes: distances[resolvedEnd] ?? 0,
+      } else {
+        legs.add(
+          RouteLeg(
+            line: (stationsLines[path[0]]?.isNotEmpty ?? false)
+                ? stationsLines[path[0]]!.first
+                : 0,
+            stationsFa: [stationsFa[path[0]] ?? path[0]],
           ),
         );
-      });
-    } catch (e) {
-      return const Left(RoutingFailure('خطای غیرمنتظره در محاسبه مسیر.'));
-    }
+      }
+
+      return Right(
+        MetroRoute(
+          legs: legs, // جایگزین path شد
+          estimatedTimeMinutes: distances[endKey]!,
+        ),
+      );
+    });
   }
 }

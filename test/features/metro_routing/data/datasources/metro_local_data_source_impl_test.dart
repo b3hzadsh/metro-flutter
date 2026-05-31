@@ -17,7 +17,7 @@ void main() {
 
   setUp(() {
     mockBox = MockBox();
-    dataSource = MetroLocalDataSourceImpl(graphBox: mockBox);
+    dataSource = MetroLocalDataSourceImpl(store: mockBox);
 
     // ثبت کلاس MetroGraphModel به عنوان یک نوع مجاز (Fallback) در Mocktail
     registerFallbackValue(

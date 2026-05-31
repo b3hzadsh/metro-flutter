@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:metro/features/metro_routing/presentation/pages/route_result_widget.dart';
 
 import '../../../../injection_container.dart';
 import '../bloc/metro_routing_bloc.dart';
@@ -250,72 +251,7 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
                   child: CircularProgressIndicator(color: Color(0xFF2D3748)),
                 );
               } else if (state is RouteLoaded) {
-                final route = state.route;
-                return Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.timer_outlined, color: Colors.green),
-                          const SizedBox(width: 8),
-                          Text(
-                            'زمان تخمینی: ${route.estimatedTimeMinutes} دقیقه',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Divider(height: 32),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: route.path.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 8.0,
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    index == 0 || index == route.path.length - 1
-                                        ? Icons.radio_button_checked
-                                        : Icons.radio_button_unchecked,
-                                    size: 16,
-                                    color: const Color(0xFF4A5568),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Text(
-                                    route.path[index],
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+                return RouteResultWidget(route: state.route);
               } else if (state is MetroRoutingError) {
                 return Center(
                   child: Container(

@@ -2,64 +2,59 @@
 
 import 'dart:convert';
 import 'package:objectbox/objectbox.dart';
-import '../../domain/entities/metro_graph.dart';
 
 @Entity()
-class MetroGraphModel extends MetroGraph {
+class MetroGraphModel {
   @Id()
-  int id;
+  int id = 0;
 
+  String lastUpdated;
   String nodesJson;
-  String stationsFaJson; // اضافه شدن ستون دیتابیس برای اسامی فارسی
+  String stationsFaJson;
 
-  @Property(type: PropertyType.date)
-  DateTime lastUpdatedData;
+  // فیلد جدید برای ذخیره دیتای خطوط به صورت متنی در دیتابیس
+  String stationsLinesJson;
 
   MetroGraphModel({
     this.id = 0,
+    required this.lastUpdated,
     required this.nodesJson,
-    required this.stationsFaJson, // اضافه شد
-    required this.lastUpdatedData,
-  }) : super(
-         nodes: _parseNodesStr(nodesJson),
-         stationsFa: _parseStationsFaStr(
-           stationsFaJson,
-         ), // پارس کردن دیتای فارسی
-         lastUpdated: lastUpdatedData,
-       );
+    required this.stationsFaJson,
+    required this.stationsLinesJson, // 👈 اضافه شد
+  });
 
-  // تبدیل رشته JSON به Map تو در تو برای گراف
-  static Map<String, Map<String, int>> _parseNodesStr(String jsonString) {
-    final Map<String, dynamic> map = json.decode(jsonString);
-    final Map<String, Map<String, int>> result = {};
-    map.forEach((key, value) {
-      result[key] = Map<String, int>.from(value as Map);
+  // Getter برای استخراج گراف مسیریابی
+  Map<String, Map<String, int>> get nodes {
+    final Map<String, dynamic> decoded = json.decode(nodesJson);
+    return decoded.map((key, value) {
+      final innerMap = value as Map<String, dynamic>;
+      return MapEntry(key, innerMap.map((k, v) => MapEntry(k, v as int)));
     });
-    return result;
   }
 
-  // تبدیل رشته JSON به Map ساده برای دیکشنری فارسی
-  static Map<String, String> _parseStationsFaStr(String jsonString) {
-    final Map<String, dynamic> map = json.decode(jsonString);
-    return Map<String, String>.from(map);
+  // Getter برای استخراج دیکشنری فارسی
+  Map<String, String> get stationsFa {
+    final Map<String, dynamic> decoded = json.decode(stationsFaJson);
+    return decoded.map((key, value) => MapEntry(key, value.toString()));
   }
 
-  factory MetroGraphModel.fromEntity(MetroGraph entity) {
-    return MetroGraphModel(
-      nodesJson: json.encode(entity.nodes),
-      stationsFaJson: json.encode(entity.stationsFa), // آماده‌سازی برای ذخیره
-      lastUpdatedData: entity.lastUpdated,
-    );
+  // 👈 Getter جدید برای استخراج شماره خطوط هر ایستگاه
+  Map<String, List<int>> get stationsLines {
+    final Map<String, dynamic> decoded = json.decode(stationsLinesJson);
+    return decoded.map((key, value) {
+      final linesList = (value as List<dynamic>).map((e) => e as int).toList();
+      return MapEntry(key, linesList);
+    });
   }
 
   factory MetroGraphModel.fromJson(Map<String, dynamic> jsonMap) {
-    final Map<String, dynamic> nodesData = jsonMap['nodes'] ?? {};
-    final Map<String, dynamic> stationsFaData =
-        jsonMap['stationsFa'] ?? {}; // دریافت از سرور
     return MetroGraphModel(
-      nodesJson: json.encode(nodesData),
-      stationsFaJson: json.encode(stationsFaData),
-      lastUpdatedData: DateTime.parse(jsonMap['lastUpdated'] as String),
+      lastUpdated: jsonMap['lastUpdated'] ?? '',
+      nodesJson: json.encode(jsonMap['nodes'] ?? {}),
+      stationsFaJson: json.encode(jsonMap['stationsFa'] ?? {}),
+      stationsLinesJson: json.encode(
+        jsonMap['stationsLines'] ?? {},
+      ), // 👈 مپ کردن از JSON
     );
   }
 }

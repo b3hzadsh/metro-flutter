@@ -15,7 +15,7 @@ class MetroRemoteDataSourceImpl implements MetroRemoteDataSource {
 
   // لینک اختصاصی و مستقیم GitHub Gist حاوی فایل حاوی اسامی فارسی و اتصالات گراف
   static const String url =
-      'https://gist.github.com/b3hzadsh/9cc5e93cee99da4cb044f567c778c540/raw/86c3e2a4da6ebfbb9bb56e9d201eecb1180c4cc6/metro_graph.json';
+      'https://gist.githubusercontent.com/b3hzadsh/9cc5e93cee99da4cb044f567c778c540/raw/18a81f1ab8043ec30e783732708a50d72d287383/metro_graph.json';
 
   MetroRemoteDataSourceImpl({required this.dio});
 

@@ -24,15 +24,23 @@ class MetroRepositoryImpl implements MetroRepository {
   @override
   Future<Either<Failure, MetroGraph>> getMetroGraph() async {
     try {
-      // فقط از دیتابیس لوکال می‌خواند (کاملاً آفلاین)
-      // final localGraph = await localDataSource.getMetroGraph();
-      final localGraph = await localDataSource.getLastMetroGraph();
-      return Right(localGraph);
-    } on CacheException {
-      // اگر دیتابیس خالی بود (اجرای اول برنامه)
-      return const Left(
-        CacheFailure('نقشه مترو یافت نشد. لطفاً ابتدا دیتا را دانلود کنید.'),
+      // ۱. دریافت مدل از ObjectBox
+      final localGraphModel = await localDataSource.getLastMetroGraph();
+
+      // ۲. تبدیل صریح مدل دیتابیس به موجودیت Domain (لایه هسته)
+      final metroGraph = MetroGraph(
+        nodes: localGraphModel.nodes,
+        stationsFa: localGraphModel.stationsFa,
+        stationsLines:
+            localGraphModel.stationsLines, // 👈 فیلد جدید پاس داده می‌شود
+        // مدیریت تبدیل تاریخ از متن به شیء DateTime
+        lastUpdated:
+            DateTime.tryParse(localGraphModel.lastUpdated) ?? DateTime.now(),
       );
+
+      return Right(metroGraph);
+    } catch (e) {
+      return const Left(CacheFailure('خطا در خواندن اطلاعات محلی'));
     }
   }
 

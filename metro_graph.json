@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-05-30T06:45:32.334978Z",
+  "lastUpdated": "2026-05-31T08:55:23.199247Z",
   "nodes": {
     "Tajrish": {
       "Gheytariyeh": 2
@@ -776,5 +776,475 @@
     "Meydan-e San'at": "میدان صنعت",
     "Shahid Dadman": "شهید دادمان",
     "Meydan-e Ketab": "میدان کتاب"
+  },
+  "stationsLines": {
+    "Tajrish": [
+      1
+    ],
+    "Gheytariyeh": [
+      1
+    ],
+    "Shahid Sadr": [
+      1
+    ],
+    "Qolhak": [
+      1
+    ],
+    "Doctor Shariati": [
+      1
+    ],
+    "Mirdamad": [
+      1
+    ],
+    "Shahid Haghani": [
+      1
+    ],
+    "Shahid Hemmat": [
+      1
+    ],
+    "Mosalla-ye Imam Khomeini": [
+      1
+    ],
+    "Shahid Beheshti": [
+      1,
+      3
+    ],
+    "Shahid Mofattah": [
+      1
+    ],
+    "Ayatollah Taleghani": [
+      1
+    ],
+    "Darvazeh Dolat": [
+      1,
+      4
+    ],
+    "Sa'adi": [
+      1
+    ],
+    "Imam Khomeini": [
+      1,
+      2
+    ],
+    "Panzdah-e Khordad": [
+      1
+    ],
+    "Khayyam": [
+      1
+    ],
+    "Meydan-e Mohammadiyeh": [
+      1,
+      7
+    ],
+    "Shoush": [
+      1
+    ],
+    "Payaneh Jonoub(Jonoub Terminal)": [
+      1
+    ],
+    "Shahid Bokharaei": [
+      1
+    ],
+    "Aliabad": [
+      1
+    ],
+    "Javanmard-e Ghassab": [
+      1
+    ],
+    "Shahr-e Rey": [
+      1
+    ],
+    "Palayeshgah": [
+      1
+    ],
+    "Shahed - BagherShahr": [
+      1
+    ],
+    "Namayeshgah-e Shahr-e Aftab": [
+      1
+    ],
+    "Vavan": [
+      1
+    ],
+    "Emam Khomeini Airport": [
+      1
+    ],
+    "Shahr-e Parand": [
+      1
+    ],
+    "Holy Shrine of Imam Khomeini": [
+      1
+    ],
+    "Kahrizak": [
+      1
+    ],
+    "Farhangsara": [
+      2
+    ],
+    "Tehranpars": [
+      2
+    ],
+    "Shahid Bagheri": [
+      2
+    ],
+    "Daneshgah-e Elm-o San'at": [
+      2
+    ],
+    "Sarsabz": [
+      2
+    ],
+    "Janbazan": [
+      2
+    ],
+    "Fadak": [
+      2
+    ],
+    "Sabalan": [
+      2
+    ],
+    "Shahid Madani": [
+      2
+    ],
+    "Imam Hossein": [
+      2,
+      6
+    ],
+    "Darvazeh Shemiran": [
+      2,
+      4
+    ],
+    "Baharistan": [
+      2
+    ],
+    "Mellat": [
+      2
+    ],
+    "Hasan Abad": [
+      2
+    ],
+    "Daneshgah-e Imam Ali": [
+      2
+    ],
+    "Meydan-e Horr": [
+      2
+    ],
+    "Shahid Navab-e Safavi": [
+      2,
+      7
+    ],
+    "Shademan": [
+      2,
+      4
+    ],
+    "Daneshgah-e Sharif": [
+      2
+    ],
+    "Tarasht": [
+      2
+    ],
+    "Tehran (Sadeghiyeh)": [
+      2,
+      5
+    ],
+    "Qa'em": [
+      3
+    ],
+    "Shahid Mahallati": [
+      3
+    ],
+    "Aghdasiyeh": [
+      3
+    ],
+    "Nobonyad": [
+      3
+    ],
+    "Hossein Abad": [
+      3
+    ],
+    "Meydan-e Heravi": [
+      3
+    ],
+    "Shahid Zeynoddin": [
+      3
+    ],
+    "Khajeh Abdollah-e Ansari": [
+      3
+    ],
+    "Shahid Sayyad Shirazi": [
+      3
+    ],
+    "Shahid Ghodousi": [
+      3
+    ],
+    "Sohrevardi": [
+      3
+    ],
+    "Mirza-ye Shirazi": [
+      3
+    ],
+    "Meydan-e Jahad": [
+      3
+    ],
+    "Teatr-e Shahr": [
+      3,
+      4
+    ],
+    "Moniriyeh": [
+      3
+    ],
+    "Mahdiyeh": [
+      3,
+      7
+    ],
+    "Rahahan": [
+      3
+    ],
+    "Javadiyeh": [
+      3
+    ],
+    "Zamzam": [
+      3
+    ],
+    "Shahrak-e Shariaty": [
+      3
+    ],
+    "Abdol Abad": [
+      3
+    ],
+    "Nemat Abad": [
+      3
+    ],
+    "Azadegan": [
+      3
+    ],
+    "Shahid Kolahdooz": [
+      4
+    ],
+    "Nirou Havaei": [
+      4
+    ],
+    "Nabard": [
+      4
+    ],
+    "Piroozi": [
+      4
+    ],
+    "Ebn-e Sina": [
+      4
+    ],
+    "Ferdowsi": [
+      4
+    ],
+    "Meydan-e Enghelab-e Eslami": [
+      4
+    ],
+    "Towhid": [
+      4,
+      7
+    ],
+    "Doctor Habibollah": [
+      4
+    ],
+    "Ostad Mo'in": [
+      4
+    ],
+    "Meydan-e Azadi": [
+      4
+    ],
+    "Bimeh": [
+      4
+    ],
+    "Mehrabad Airport Terminal 1&2": [
+      4
+    ],
+    "Mehrabad Airport Terminal 4&6": [
+      4
+    ],
+    "Shahrak-e Ekbatan": [
+      4
+    ],
+    "Allameh Jafari": [
+      4
+    ],
+    "Chaharbagh": [
+      4
+    ],
+    "Eram-e Sabz": [
+      4,
+      5
+    ],
+    "Varzeshgah-e Azadi": [
+      5
+    ],
+    "Chitgar": [
+      5
+    ],
+    "Iran Khodro": [
+      5
+    ],
+    "Vardavard": [
+      5
+    ],
+    "Garmdareh": [
+      5
+    ],
+    "Atmosphere": [
+      5
+    ],
+    "Karaj": [
+      5
+    ],
+    "Mohammadshahr": [
+      5
+    ],
+    "Golshahr": [
+      5
+    ],
+    "Shahid Sepahbod Qasem Soleimani": [
+      5
+    ],
+    "Haram-e Hazrat-e Abdol Azim": [
+      6
+    ],
+    "Meydan-e Hazrat-e Abdol Azim": [
+      6
+    ],
+    "Ebn-e Babviyeh": [
+      6
+    ],
+    "Cheshmeh Ali": [
+      6
+    ],
+    "Shohada-ye Dowlat Abad": [
+      6
+    ],
+    "Kiyan Shahr": [
+      6
+    ],
+    "Be'sat": [
+      6
+    ],
+    "Shahid Rezaei": [
+      6
+    ],
+    "Meydan-e Khorasan": [
+      6
+    ],
+    "Shohada-ye Hefdah-e Shahrivar": [
+      6,
+      7
+    ],
+    "Amirkabir": [
+      6
+    ],
+    "Meydan-e Shohada": [
+      4,
+      6
+    ],
+    "Sarbaz": [
+      6
+    ],
+    "Bahar Shiraz (Khanevadeh Hospital)": [
+      6
+    ],
+    "Shohada-ye Haftom-e Tir": [
+      1,
+      6
+    ],
+    "Maryam-e Moghaddas": [
+      6
+    ],
+    "Meydan-e Hazrat Vali Asr": [
+      3,
+      6
+    ],
+    "Bustan-e Laleh": [
+      6
+    ],
+    "Karagar": [
+      6
+    ],
+    "Daneshgah-e Tarbiat Modarres": [
+      6,
+      7
+    ],
+    "Shahrak-e Azmayesh": [
+      6
+    ],
+    "Marzdaran": [
+      6
+    ],
+    "Yadegar-e Imam": [
+      6
+    ],
+    "Shahid Ashrafi Esfahani": [
+      6
+    ],
+    "Shahid Sattari": [
+      6
+    ],
+    "Ayatollah Kashani": [
+      6
+    ],
+    "Shahr-e Ziba": [
+      6
+    ],
+    "Shahran": [
+      6
+    ],
+    "Shohada-ye Kan": [
+      6
+    ],
+    "Kouhsar": [
+      6
+    ],
+    "Varzeshgah-e Takhti": [
+      7
+    ],
+    "Basij": [
+      7
+    ],
+    "Ahang": [
+      7
+    ],
+    "Chehel Tan-e Doulab": [
+      7
+    ],
+    "Meydan-e Giyam": [
+      7
+    ],
+    "Mowlavi": [
+      7
+    ],
+    "Helal Ahmar": [
+      7
+    ],
+    "Beryanak": [
+      7
+    ],
+    "Komeyl": [
+      7
+    ],
+    "Roudaki": [
+      7
+    ],
+    "Modafean-e Salamat": [
+      7
+    ],
+    "Boostan-e Goftegou": [
+      7
+    ],
+    "Milad Tower": [
+      7
+    ],
+    "Meydan-e San'at": [
+      7
+    ],
+    "Shahid Dadman": [
+      7
+    ],
+    "Meydan-e Ketab": [
+      7
+    ]
   }
 }
