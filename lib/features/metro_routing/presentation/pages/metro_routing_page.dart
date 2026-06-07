@@ -17,7 +17,6 @@ class MetroRoutingPage extends StatelessWidget {
     return BlocProvider(
       create: (_) => sl<MetroRoutingBloc>(),
       child: const Scaffold(
-        // طراحی مینیمال: استفاده از رنگ پس‌زمینه خنثی
         backgroundColor: Color(0xFFF8F9FA),
         body: SafeArea(
           child: Padding(
@@ -38,14 +37,12 @@ class _MetroRoutingForm extends StatefulWidget {
 }
 
 class _MetroRoutingFormState extends State<_MetroRoutingForm> {
-  // کنترلرهای اختصاصی که Autocomplete در اختیار ما می‌گذارد
   TextEditingController? _startController;
   TextEditingController? _endController;
 
   @override
   void initState() {
     super.initState();
-    // به محض باز شدن صفحه، از BLoC می‌خواهیم لیست ایستگاه‌ها را از دیتابیس لود کند
     context.read<MetroRoutingBloc>().add(LoadStationsListRequested());
   }
 
@@ -56,7 +53,6 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
     final end = _endController?.text.trim() ?? '';
     final bloc = context.read<MetroRoutingBloc>();
 
-    // اعتبارسنجی ۱: خالی نبودن
     if (start.isEmpty || end.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('لطفاً مبدا و مقصد را وارد کنید.')),
@@ -64,7 +60,6 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
       return;
     }
 
-    // اعتبارسنجی ۲: اجبار به انتخاب از لیست (کاربر نتواند متن الکی تایپ کند)
     if (!bloc.availableStations.contains(start) ||
         !bloc.availableStations.contains(end)) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -83,7 +78,6 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
     context.read<MetroRoutingBloc>().add(UpdateGraphRequested());
   }
 
-  // یک متد سازنده برای تولید فیلدهای هوشمند (برای جلوگیری از تکرار کد)
   Widget _buildAutocompleteField({
     required String label,
     required IconData icon,
@@ -93,18 +87,15 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
   }) {
     return Autocomplete<String>(
       optionsBuilder: (TextEditingValue textEditingValue) {
-        if (textEditingValue.text.isEmpty)
+        if (textEditingValue.text.isEmpty) {
           return const Iterable<String>.empty();
-
-        // جستجو در ایستگاه‌ها (بدون حساسیت به فاصله)
+        }
         return options.where((String option) {
           return option.contains(textEditingValue.text.trim());
         });
       },
-      // طراحی فیلد متنی اصلی
       fieldViewBuilder:
           (context, textEditingController, focusNode, onFieldSubmitted) {
-            // پاس دادن کنترلر به متغیرهای استیت ما برای استفاده در دکمه سابمیت
             onControllerReady(textEditingController);
 
             return TextField(
@@ -122,7 +113,6 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
               ),
             );
           },
-      // طراحی منوی کشویی که باز می‌شود
       optionsViewBuilder: (context, onSelected, options) {
         return Align(
           alignment: Alignment.topRight,
@@ -142,9 +132,7 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
                       option,
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
-                    onTap: () => onSelected(
-                      option,
-                    ), // با کلیک کاربر، متن در فیلد پر می‌شود
+                    onTap: () => onSelected(option),
                   );
                 },
               ),
@@ -157,7 +145,6 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
 
   @override
   Widget build(BuildContext context) {
-    // گرفتن لیست آپدیت شده از BLoC
     final stationsList = context.watch<MetroRoutingBloc>().availableStations;
 
     return Column(
@@ -183,8 +170,6 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
           ],
         ),
         const SizedBox(height: 32),
-
-        // استفاده از ویجت‌های هوشمند ساخته شده
         _buildAutocompleteField(
           label: 'ایستگاه مبدا',
           icon: Icons.trip_origin,
@@ -201,7 +186,6 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
           onControllerReady: (controller) => _endController = controller,
         ),
         const SizedBox(height: 24),
-
         ElevatedButton(
           onPressed: _submitRouting,
           style: ElevatedButton.styleFrom(
@@ -219,11 +203,9 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
           ),
         ),
         const SizedBox(height: 32),
-        // BlocConsumer برای گوش دادن به رویدادها و ساخت UI
         Expanded(
           child: BlocConsumer<MetroRoutingBloc, MetroRoutingState>(
             listener: (context, state) {
-              // نمایش اسنک‌بار فقط در زمان آپدیت موفق
               if (state is GraphUpdateSuccess) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -271,7 +253,6 @@ class _MetroRoutingFormState extends State<_MetroRoutingForm> {
                   ),
                 );
               }
-              // حالت Initial یا Success (که نیازی به تغییر فرم پایین صفحه ندارد)
               return const Center(
                 child: Text(
                   'برای شروع، روی آیکون دانلود (بالا چپ) کلیک کنید تا نقشه بارگیری شود.',
