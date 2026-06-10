@@ -1,0 +1,9 @@
+- add dark mode 
+- add better color for background and around 
+- add drawer 
+- add line info page 
+- add ui check
+- add font
+- fix duration to next station 
+
+gemini --resume "e790ba66-67c0-4e1f-8f1b-fd7a52c6d247" 
