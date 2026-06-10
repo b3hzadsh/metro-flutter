@@ -42,28 +42,25 @@ class MetroRepositoryImpl implements MetroRepository {
 
   @override
   Future<Either<Failure, void>> updateMetroGraph() async {
-    print('🔵 DEBUG [Repository]: بررسی اتصال اینترنت...');
+    // DEBUG log removed
     if (await networkInfo.hasConnection) {
       try {
-        print('🔵 DEBUG [Repository]: دستگاه آنلاین است. فراخوانی دانلود...');
+        // DEBUG log removed
         final remoteMetroGraph = await remoteDataSource.downloadGraph();
 
-        print(
-          '🔵 DEBUG [Repository]: دانلود موفق. تلاش برای کش در ObjectBox...',
-        );
+        // DEBUG log removed
         await localDataSource.cacheMetroGraph(remoteMetroGraph);
 
-        print('🟢 DEBUG [Repository]: کش کردن در دیتابیس با موفقیت انجام شد!');
+        // DEBUG log removed
         return const Right(null);
       } on ServerException {
         return const Left(RoutingFailure('خطا در دریافت اطلاعات از سرور.'));
       } catch (e) {
-        print('🔴 FATAL [Repository ObjectBox Error]: خطا در ذخیره‌سازی محلی.');
-        print('خطا: $e');
+        // FATAL log removed
         return const Left(RoutingFailure('خطای داخلی در پردازش اطلاعات.'));
       }
     } else {
-      print('🔴 DEBUG [Repository]: دستگاه آفلاین است.');
+      // DEBUG log removed
       return const Left(
         RoutingFailure('برای آپدیت نقشه به اینترنت نیاز دارید.'),
       );

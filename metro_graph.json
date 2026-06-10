@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-05-31T08:55:23.199247Z",
+  "lastUpdated": "2026-06-10T15:05:35.872597Z",
   "nodes": {
     "Tajrish": {
       "Gheytariyeh": 2
@@ -10,10 +10,10 @@
     },
     "Shahid Sadr": {
       "Gheytariyeh": 2,
-      "Shahid Sadr": 2
+      "Shahid Sadr": 1
     },
     "Qolhak": {
-      "Shahid Sadr": 2,
+      "Shahid Sadr": 3,
       "Doctor Shariati": 2
     },
     "Doctor Shariati": {
@@ -48,11 +48,11 @@
     },
     "Ayatollah Taleghani": {
       "Shohada-ye Haftom-e Tir": 2,
-      "Darvazeh Dolat": 2
+      "Darvazeh Dolat": 1
     },
     "Darvazeh Dolat": {
-      "Ayatollah Taleghani": 2,
-      "Ferdowsi": 2,
+      "Ayatollah Taleghani": 1,
+      "Ferdowsi": 1,
       "Darvazeh Shemiran": 2,
       "Sa'adi": 2
     },
@@ -63,19 +63,19 @@
     "Imam Khomeini": {
       "Sa'adi": 2,
       "Hasan Abad": 2,
-      "Mellat": 2,
+      "Mellat": 1,
       "Panzdah-e Khordad": 2
     },
     "Panzdah-e Khordad": {
       "Imam Khomeini": 2,
-      "Khayyam": 2
+      "Khayyam": 1
     },
     "Khayyam": {
-      "Panzdah-e Khordad": 2,
-      "Meydan-e Mohammadiyeh": 2
+      "Panzdah-e Khordad": 1,
+      "Meydan-e Mohammadiyeh": 1
     },
     "Meydan-e Mohammadiyeh": {
-      "Khayyam": 2,
+      "Khayyam": 1,
       "Mahdiyeh": 2,
       "Mowlavi": 2,
       "Shoush": 2
@@ -94,52 +94,52 @@
     },
     "Aliabad": {
       "Shahid Bokharaei": 2,
-      "Javanmard-e Ghassab": 2
+      "Javanmard-e Ghassab": 4
     },
     "Javanmard-e Ghassab": {
-      "Aliabad": 2,
-      "Shahr-e Rey": 2
+      "Aliabad": 4,
+      "Shahr-e Rey": 3
     },
     "Shahr-e Rey": {
-      "Javanmard-e Ghassab": 2,
-      "Palayeshgah": 2
+      "Javanmard-e Ghassab": 3,
+      "Palayeshgah": 5
     },
     "Palayeshgah": {
-      "Shahr-e Rey": 2,
-      "Shahed - BagherShahr": 2
+      "Shahr-e Rey": 5,
+      "Shahed - BagherShahr": 6
     },
     "Shahed - BagherShahr": {
-      "Palayeshgah": 2,
-      "Namayeshgah-e Shahr-e Aftab": 2,
+      "Palayeshgah": 6,
+      "Namayeshgah-e Shahr-e Aftab": 5,
       "Holy Shrine of Imam Khomeini": 2
     },
     "Namayeshgah-e Shahr-e Aftab": {
-      "Shahed - BagherShahr": 2,
-      "Vavan": 2
+      "Shahed - BagherShahr": 5,
+      "Vavan": 8
     },
     "Vavan": {
-      "Namayeshgah-e Shahr-e Aftab": 2,
-      "Emam Khomeini Airport": 2
+      "Namayeshgah-e Shahr-e Aftab": 8,
+      "Emam Khomeini Airport": 26
     },
     "Emam Khomeini Airport": {
-      "Vavan": 2,
-      "Shahr-e Parand": 2
+      "Vavan": 26,
+      "Shahr-e Parand": 34
     },
     "Shahr-e Parand": {
-      "Emam Khomeini Airport": 2
+      "Emam Khomeini Airport": 34
     },
     "Holy Shrine of Imam Khomeini": {
       "Shahed - BagherShahr": 2,
-      "Kahrizak": 2
+      "Kahrizak": 4
     },
     "Kahrizak": {
-      "Holy Shrine of Imam Khomeini": 2
+      "Holy Shrine of Imam Khomeini": 4
     },
     "Farhangsara": {
-      "Tehranpars": 2
+      "Tehranpars": 3
     },
     "Tehranpars": {
-      "Farhangsara": 2,
+      "Farhangsara": 3,
       "Shahid Bagheri": 2
     },
     "Shahid Bagheri": {
@@ -160,14 +160,14 @@
     },
     "Fadak": {
       "Janbazan": 2,
-      "Sabalan": 2
+      "Sabalan": 3
     },
     "Sabalan": {
-      "Fadak": 2,
-      "Shahid Madani": 2
+      "Fadak": 3,
+      "Shahid Madani": 3
     },
     "Shahid Madani": {
-      "Sabalan": 2,
+      "Sabalan": 3,
       "Imam Hossein": 2
     },
     "Imam Hossein": {
@@ -184,11 +184,11 @@
     },
     "Baharistan": {
       "Darvazeh Shemiran": 2,
-      "Mellat": 2
+      "Mellat": 1
     },
     "Mellat": {
-      "Baharistan": 2,
-      "Imam Khomeini": 2
+      "Baharistan": 1,
+      "Imam Khomeini": 1
     },
     "Hasan Abad": {
       "Imam Khomeini": 2,
@@ -204,41 +204,41 @@
     },
     "Shahid Navab-e Safavi": {
       "Meydan-e Horr": 2,
-      "Towhid": 2,
-      "Roudaki": 2,
-      "Shademan": 2
+      "Towhid": 1,
+      "Roudaki": 1,
+      "Shademan": 3
     },
     "Shademan": {
-      "Shahid Navab-e Safavi": 2,
+      "Shahid Navab-e Safavi": 3,
       "Towhid": 2,
       "Doctor Habibollah": 2,
       "Daneshgah-e Sharif": 2
     },
     "Daneshgah-e Sharif": {
       "Shademan": 2,
-      "Tarasht": 2
+      "Tarasht": 3
     },
     "Tarasht": {
-      "Daneshgah-e Sharif": 2,
+      "Daneshgah-e Sharif": 3,
       "Tehran (Sadeghiyeh)": 2
     },
     "Tehran (Sadeghiyeh)": {
       "Tarasht": 2,
-      "Eram-e Sabz": 2
+      "Eram-e Sabz": 4
     },
     "Qa'em": {
       "Shahid Mahallati": 2
     },
     "Shahid Mahallati": {
       "Qa'em": 2,
-      "Aghdasiyeh": 2
+      "Aghdasiyeh": 3
     },
     "Aghdasiyeh": {
-      "Shahid Mahallati": 2,
-      "Nobonyad": 2
+      "Shahid Mahallati": 3,
+      "Nobonyad": 3
     },
     "Nobonyad": {
-      "Aghdasiyeh": 2,
+      "Aghdasiyeh": 3,
       "Hossein Abad": 2
     },
     "Hossein Abad": {
@@ -247,22 +247,22 @@
     },
     "Meydan-e Heravi": {
       "Hossein Abad": 2,
-      "Shahid Zeynoddin": 2
+      "Shahid Zeynoddin": 3
     },
     "Shahid Zeynoddin": {
-      "Meydan-e Heravi": 2,
-      "Khajeh Abdollah-e Ansari": 2
+      "Meydan-e Heravi": 3,
+      "Khajeh Abdollah-e Ansari": 3
     },
     "Khajeh Abdollah-e Ansari": {
-      "Shahid Zeynoddin": 2,
+      "Shahid Zeynoddin": 3,
       "Shahid Sayyad Shirazi": 2
     },
     "Shahid Sayyad Shirazi": {
       "Khajeh Abdollah-e Ansari": 2,
-      "Shahid Ghodousi": 2
+      "Shahid Ghodousi": 3
     },
     "Shahid Ghodousi": {
-      "Shahid Sayyad Shirazi": 2,
+      "Shahid Sayyad Shirazi": 3,
       "Sohrevardi": 2
     },
     "Sohrevardi": {
@@ -281,28 +281,28 @@
       "Meydan-e Hazrat Vali Asr": 2,
       "Ferdowsi": 2,
       "Meydan-e Enghelab-e Eslami": 2,
-      "Moniriyeh": 2
+      "Moniriyeh": 4
     },
     "Moniriyeh": {
-      "Teatr-e Shahr": 2,
+      "Teatr-e Shahr": 4,
       "Mahdiyeh": 2
     },
     "Mahdiyeh": {
       "Moniriyeh": 2,
       "Meydan-e Mohammadiyeh": 2,
       "Helal Ahmar": 2,
-      "Rahahan": 2
+      "Rahahan": 3
     },
     "Rahahan": {
-      "Mahdiyeh": 2,
+      "Mahdiyeh": 3,
       "Javadiyeh": 2
     },
     "Javadiyeh": {
       "Rahahan": 2,
-      "Zamzam": 2
+      "Zamzam": 3
     },
     "Zamzam": {
-      "Javadiyeh": 2,
+      "Javadiyeh": 3,
       "Shahrak-e Shariaty": 2
     },
     "Shahrak-e Shariaty": {
@@ -340,7 +340,7 @@
       "Meydan-e Shohada": 2
     },
     "Ferdowsi": {
-      "Darvazeh Dolat": 2,
+      "Darvazeh Dolat": 1,
       "Teatr-e Shahr": 2
     },
     "Meydan-e Enghelab-e Eslami": {
@@ -349,8 +349,8 @@
     },
     "Towhid": {
       "Meydan-e Enghelab-e Eslami": 2,
-      "Modafean-e Salamat": 2,
-      "Shahid Navab-e Safavi": 2,
+      "Modafean-e Salamat": 3,
+      "Shahid Navab-e Safavi": 1,
       "Shademan": 2
     },
     "Doctor Habibollah": {
@@ -367,7 +367,7 @@
     },
     "Bimeh": {
       "Meydan-e Azadi": 2,
-      "Shahrak-e Ekbatan": 2,
+      "Shahrak-e Ekbatan": 3,
       "Mehrabad Airport Terminal 1&2": 2
     },
     "Mehrabad Airport Terminal 1&2": {
@@ -378,65 +378,65 @@
       "Mehrabad Airport Terminal 1&2": 2
     },
     "Shahrak-e Ekbatan": {
-      "Bimeh": 2,
-      "Eram-e Sabz": 2
+      "Bimeh": 3,
+      "Eram-e Sabz": 3
     },
     "Allameh Jafari": {
-      "Eram-e Sabz": 2
+      "Eram-e Sabz": 3
     },
     "Chaharbagh": {
       "Ayatollah Kashani": 2
     },
     "Eram-e Sabz": {
-      "Tehran (Sadeghiyeh)": 2,
-      "Varzeshgah-e Azadi": 2,
-      "Allameh Jafari": 2,
-      "Shahrak-e Ekbatan": 2
+      "Tehran (Sadeghiyeh)": 4,
+      "Varzeshgah-e Azadi": 3,
+      "Allameh Jafari": 3,
+      "Shahrak-e Ekbatan": 3
     },
     "Varzeshgah-e Azadi": {
-      "Eram-e Sabz": 2,
-      "Chitgar": 2
+      "Eram-e Sabz": 3,
+      "Chitgar": 6
     },
     "Chitgar": {
-      "Varzeshgah-e Azadi": 2,
-      "Iran Khodro": 2
+      "Varzeshgah-e Azadi": 6,
+      "Iran Khodro": 7
     },
     "Iran Khodro": {
-      "Chitgar": 2,
-      "Vardavard": 2
+      "Chitgar": 7,
+      "Vardavard": 7
     },
     "Vardavard": {
-      "Iran Khodro": 2,
-      "Garmdareh": 2
+      "Iran Khodro": 7,
+      "Garmdareh": 10
     },
     "Garmdareh": {
-      "Vardavard": 2,
-      "Atmosphere": 2
+      "Vardavard": 10,
+      "Atmosphere": 6
     },
     "Atmosphere": {
-      "Garmdareh": 2,
-      "Karaj": 2
+      "Garmdareh": 6,
+      "Karaj": 7
     },
     "Karaj": {
-      "Atmosphere": 2,
-      "Mohammadshahr": 2
+      "Atmosphere": 7,
+      "Mohammadshahr": 6
     },
     "Mohammadshahr": {
-      "Karaj": 2,
-      "Golshahr": 2
+      "Karaj": 6,
+      "Golshahr": 6
     },
     "Golshahr": {
-      "Mohammadshahr": 2,
-      "Shahid Sepahbod Qasem Soleimani": 2
+      "Mohammadshahr": 6,
+      "Shahid Sepahbod Qasem Soleimani": 7
     },
     "Shahid Sepahbod Qasem Soleimani": {
-      "Golshahr": 2
+      "Golshahr": 7
     },
     "Haram-e Hazrat-e Abdol Azim": {
-      "Meydan-e Hazrat-e Abdol Azim": 2
+      "Meydan-e Hazrat-e Abdol Azim": 1
     },
     "Meydan-e Hazrat-e Abdol Azim": {
-      "Haram-e Hazrat-e Abdol Azim": 2,
+      "Haram-e Hazrat-e Abdol Azim": 1,
       "Ebn-e Babviyeh": 2
     },
     "Ebn-e Babviyeh": {
@@ -445,40 +445,40 @@
     },
     "Cheshmeh Ali": {
       "Ebn-e Babviyeh": 2,
-      "Shohada-ye Dowlat Abad": 2
+      "Shohada-ye Dowlat Abad": 3
     },
     "Shohada-ye Dowlat Abad": {
-      "Cheshmeh Ali": 2,
-      "Kiyan Shahr": 2
+      "Cheshmeh Ali": 3,
+      "Kiyan Shahr": 3
     },
     "Kiyan Shahr": {
-      "Shohada-ye Dowlat Abad": 2,
+      "Shohada-ye Dowlat Abad": 3,
       "Be'sat": 2
     },
     "Be'sat": {
       "Kiyan Shahr": 2,
-      "Shahid Rezaei": 2
+      "Shahid Rezaei": 3
     },
     "Shahid Rezaei": {
-      "Be'sat": 2,
-      "Meydan-e Khorasan": 2
+      "Be'sat": 3,
+      "Meydan-e Khorasan": 3
     },
     "Meydan-e Khorasan": {
-      "Shahid Rezaei": 2,
+      "Shahid Rezaei": 3,
       "Shohada-ye Hefdah-e Shahrivar": 2
     },
     "Shohada-ye Hefdah-e Shahrivar": {
       "Meydan-e Khorasan": 2,
-      "Amirkabir": 2,
-      "Chehel Tan-e Doulab": 2,
-      "Meydan-e Giyam": 2
+      "Amirkabir": 1,
+      "Chehel Tan-e Doulab": 3,
+      "Meydan-e Giyam": 3
     },
     "Amirkabir": {
-      "Shohada-ye Hefdah-e Shahrivar": 2,
-      "Meydan-e Shohada": 2
+      "Shohada-ye Hefdah-e Shahrivar": 1,
+      "Meydan-e Shohada": 1
     },
     "Meydan-e Shohada": {
-      "Amirkabir": 2,
+      "Amirkabir": 1,
       "Ebn-e Sina": 2,
       "Darvazeh Shemiran": 2,
       "Imam Hossein": 2
@@ -513,16 +513,16 @@
     },
     "Karagar": {
       "Bustan-e Laleh": 2,
-      "Daneshgah-e Tarbiat Modarres": 2
+      "Daneshgah-e Tarbiat Modarres": 3
     },
     "Daneshgah-e Tarbiat Modarres": {
-      "Karagar": 2,
-      "Boostan-e Goftegou": 2,
-      "Modafean-e Salamat": 2,
-      "Shahrak-e Azmayesh": 2
+      "Karagar": 3,
+      "Boostan-e Goftegou": 3,
+      "Modafean-e Salamat": 3,
+      "Shahrak-e Azmayesh": 3
     },
     "Shahrak-e Azmayesh": {
-      "Daneshgah-e Tarbiat Modarres": 2,
+      "Daneshgah-e Tarbiat Modarres": 3,
       "Marzdaran": 2
     },
     "Marzdaran": {
@@ -531,42 +531,42 @@
     },
     "Yadegar-e Imam": {
       "Marzdaran": 2,
-      "Shahid Ashrafi Esfahani": 2
+      "Shahid Ashrafi Esfahani": 3
     },
     "Shahid Ashrafi Esfahani": {
-      "Yadegar-e Imam": 2,
+      "Yadegar-e Imam": 3,
       "Shahid Sattari": 2
     },
     "Shahid Sattari": {
       "Shahid Ashrafi Esfahani": 2,
-      "Ayatollah Kashani": 2
+      "Ayatollah Kashani": 3
     },
     "Ayatollah Kashani": {
-      "Shahid Sattari": 2,
-      "Shahr-e Ziba": 2,
+      "Shahid Sattari": 3,
+      "Shahr-e Ziba": 3,
       "Allameh Jafari": 2,
       "Chaharbagh": 2
     },
     "Shahr-e Ziba": {
-      "Ayatollah Kashani": 2,
-      "Shahran": 2
+      "Ayatollah Kashani": 3,
+      "Shahran": 4
     },
     "Shahran": {
-      "Shahr-e Ziba": 2,
-      "Shohada-ye Kan": 2
+      "Shahr-e Ziba": 4,
+      "Shohada-ye Kan": 3
     },
     "Shohada-ye Kan": {
-      "Shahran": 2,
-      "Kouhsar": 2
+      "Shahran": 3,
+      "Kouhsar": 3
     },
     "Kouhsar": {
-      "Shohada-ye Kan": 2
+      "Shohada-ye Kan": 3
     },
     "Varzeshgah-e Takhti": {
-      "Basij": 2
+      "Basij": 3
     },
     "Basij": {
-      "Varzeshgah-e Takhti": 2,
+      "Varzeshgah-e Takhti": 3,
       "Ahang": 2
     },
     "Ahang": {
@@ -575,10 +575,10 @@
     },
     "Chehel Tan-e Doulab": {
       "Ahang": 2,
-      "Shohada-ye Hefdah-e Shahrivar": 2
+      "Shohada-ye Hefdah-e Shahrivar": 3
     },
     "Meydan-e Giyam": {
-      "Shohada-ye Hefdah-e Shahrivar": 2,
+      "Shohada-ye Hefdah-e Shahrivar": 3,
       "Mowlavi": 2
     },
     "Mowlavi": {
@@ -587,10 +587,10 @@
     },
     "Helal Ahmar": {
       "Mahdiyeh": 2,
-      "Beryanak": 2
+      "Beryanak": 3
     },
     "Beryanak": {
-      "Helal Ahmar": 2,
+      "Helal Ahmar": 3,
       "Komeyl": 2
     },
     "Komeyl": {
@@ -599,30 +599,30 @@
     },
     "Roudaki": {
       "Komeyl": 2,
-      "Shahid Navab-e Safavi": 2
+      "Shahid Navab-e Safavi": 1
     },
     "Modafean-e Salamat": {
-      "Towhid": 2,
-      "Daneshgah-e Tarbiat Modarres": 2
+      "Towhid": 3,
+      "Daneshgah-e Tarbiat Modarres": 3
     },
     "Boostan-e Goftegou": {
-      "Daneshgah-e Tarbiat Modarres": 2,
-      "Milad Tower": 2
+      "Daneshgah-e Tarbiat Modarres": 3,
+      "Milad Tower": 1
     },
     "Milad Tower": {
-      "Boostan-e Goftegou": 2,
+      "Boostan-e Goftegou": 1,
       "Meydan-e San'at": 2
     },
     "Meydan-e San'at": {
       "Milad Tower": 2,
-      "Shahid Dadman": 2
+      "Shahid Dadman": 3
     },
     "Shahid Dadman": {
-      "Meydan-e San'at": 2,
-      "Meydan-e Ketab": 2
+      "Meydan-e San'at": 3,
+      "Meydan-e Ketab": 3
     },
     "Meydan-e Ketab": {
-      "Shahid Dadman": 2
+      "Shahid Dadman": 3
     }
   },
   "stationsFa": {

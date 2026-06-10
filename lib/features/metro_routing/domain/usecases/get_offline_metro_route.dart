@@ -39,7 +39,7 @@ class GetOfflineMetroRoute {
       final arrivedOnLine = <String, int>{};
       final unvisited = nodes.keys.toList();
 
-      const int TRANSFER_PENALTY = 8;
+      const int transferPenalty = 8;
 
       for (var node in nodes.keys) {
         distances[node] = 999999;
@@ -75,7 +75,7 @@ class GetOfflineMetroRoute {
               if (connectingLines.contains(arrivalLine)) {
                 selectedLineForMove = arrivalLine;
               } else {
-                edgeCost += TRANSFER_PENALTY;
+                edgeCost += transferPenalty;
                 selectedLineForMove = connectingLines.isNotEmpty
                     ? connectingLines.first
                     : arrivalLine;

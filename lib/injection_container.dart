@@ -4,6 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+import 'core/theme/data/datasources/theme_local_data_source.dart';
+import 'core/theme/presentation/bloc/theme_cubit.dart';
 import 'features/metro_routing/domain/usecases/get_available_stations.dart';
 import 'objectbox.g.dart';
 
@@ -20,8 +23,10 @@ final sl = GetIt.instance;
 
 Future<void> init() async {
   final store = await openStore();
+  final sharedPreferences = await SharedPreferences.getInstance();
 
   sl.registerLazySingleton<Store>(() => store);
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 
   sl.registerLazySingleton<Box<MetroGraphModel>>(
     () => store.box<MetroGraphModel>(),
@@ -33,6 +38,14 @@ Future<void> init() async {
       updateMetroGraph: sl(),
       getAvailableStations: sl(),
     ),
+  );
+
+  sl.registerFactory(
+    () => ThemeCubit(themeLocalDataSource: sl()),
+  );
+
+  sl.registerLazySingleton<ThemeLocalDataSource>(
+    () => ThemeLocalDataSourceImpl(sharedPreferences: sl()),
   );
 
   sl.registerLazySingleton(() => GetMetroRoute(sl()));

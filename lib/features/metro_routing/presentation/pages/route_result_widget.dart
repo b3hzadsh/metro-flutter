@@ -32,26 +32,35 @@ class RouteResultWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Expanded(
       child: ListView(
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.only(bottom: 24),
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.green.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.green.shade200),
+              color: theme.colorScheme.secondaryContainer,
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Text(
-              'زمان تخمینی سفر: ${route.estimatedTimeMinutes} دقیقه',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.green.shade700,
-              ),
-              textAlign: TextAlign.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.timer_outlined, 
+                  color: theme.colorScheme.onSecondaryContainer
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'زمان تخمینی سفر: ${route.estimatedTimeMinutes} دقیقه',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSecondaryContainer,
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 24),
@@ -60,10 +69,6 @@ class RouteResultWidget extends StatelessWidget {
 
             return Card(
               margin: const EdgeInsets.only(bottom: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 3,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -78,14 +83,14 @@ class RouteResultWidget extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: _getLineColor(leg.line),
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             'خط ${leg.line}',
                             style: const TextStyle(
                               color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 14,
                             ),
                           ),
                         ),
@@ -93,34 +98,44 @@ class RouteResultWidget extends StatelessWidget {
                         Expanded(
                           child: Text(
                             'به سمت $directionStation',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF2D3748),
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Divider(height: 1, thickness: 1),
-                    ),
-                    Text(
-                      'طی کردن ${leg.stationsFa.length - 1} ایستگاه:',
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Divider(
+                        height: 1, 
+                        thickness: 1,
+                        color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.stairs_outlined, 
+                          size: 16, 
+                          color: theme.colorScheme.primary
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'طی کردن ${leg.stationsFa.length - 1} ایستگاه:',
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
                     Text(
                       leg.stationsFa.join('  ←  '),
-                      style: const TextStyle(
-                        fontSize: 14,
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.8,
-                        color: Color(0xFF4A5568),
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],

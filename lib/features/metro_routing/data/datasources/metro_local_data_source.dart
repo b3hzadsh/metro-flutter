@@ -22,21 +22,19 @@ class MetroLocalDataSourceImpl implements MetroLocalDataSource {
   @override
   Future<MetroGraphModel> getLastMetroGraph() async {
     try {
-      print('🔵 DEBUG [LocalDataSource]: در حال خواندن نقشه از ObjectBox...');
+      // DEBUG log removed
 
       final graphs = graphBox.getAll();
 
       if (graphs.isNotEmpty) {
-        print('🟢 DEBUG [LocalDataSource]: نقشه با موفقیت از کش خوانده شد.');
+        // DEBUG log removed
         return graphs.first;
       } else {
-        print(
-          '🟡 DEBUG [LocalDataSource]: هیچ نقشه‌ای در دیتابیس یافت نشد (دیتابیس خالی است).',
-        );
+        // DEBUG log removed
         throw CacheException();
       }
     } catch (e) {
-      print('🔴 FATAL [LocalDataSource]: خطا در خواندن دیتا از ObjectBox: $e');
+      // FATAL log removed
       throw CacheException();
     }
   }
@@ -44,21 +42,17 @@ class MetroLocalDataSourceImpl implements MetroLocalDataSource {
   @override
   Future<void> cacheMetroGraph(MetroGraphModel graphToCache) async {
     try {
-      print('🔵 DEBUG [LocalDataSource]: در حال پاکسازی نقشه‌های قدیمی...');
+      // DEBUG log removed
       graphBox.removeAll();
 
       graphToCache.id = 0;
 
-      print(
-        '🔵 DEBUG [LocalDataSource]: در حال ذخیره نقشه جدید در ObjectBox...',
-      );
+      // DEBUG log removed
       graphBox.put(graphToCache);
 
-      print(
-        '🟢 DEBUG [LocalDataSource]: نقشه با موفقیت در دیتابیس لوکال کش شد.',
-      );
+      // DEBUG log removed
     } catch (e) {
-      print('🔴 FATAL [LocalDataSource]: خطا در ذخیره دیتا در ObjectBox: $e');
+      // FATAL log removed
       throw CacheException();
     }
   }

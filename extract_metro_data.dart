@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 Future<void> main() async {
   const url =
@@ -22,13 +23,21 @@ Future<void> main() async {
 
     final Map<String, Map<String, int>> nodes = {};
     final Map<String, String> stationsFa = {};
-    final Map<String, List<int>> stationsLines =
-        {}; // 👈 مپ جدید برای خطوط مترو
+    final Map<String, List<int>> stationsLines = {};
+    
+    // ۱. استخراج مختصات برای محاسبه فاصله
+    final Map<String, _Coord> coords = {};
+    sourceData.forEach((key, value) {
+      final info = value as Map<String, dynamic>;
+      final lat = double.tryParse(info['latitude']?.toString() ?? '') ?? 0.0;
+      final lon = double.tryParse(info['longitude']?.toString() ?? '') ?? 0.0;
+      coords[key] = _Coord(lat, lon);
+    });
 
     sourceData.forEach((stationKey, value) {
       final stationInfo = value as Map<String, dynamic>;
 
-      // ۱. استخراج نام فارسی
+      // ۲. استخراج نام فارسی
       final translations = stationInfo['translations'] as Map<String, dynamic>?;
       if (translations != null && translations['fa'] != null) {
         stationsFa[stationKey] = translations['fa'].toString();
@@ -36,15 +45,37 @@ Future<void> main() async {
         stationsFa[stationKey] = stationKey;
       }
 
-      // ۲. استخراج خطوط مترو (دقت در تبدیل تایپ به int)
+      // ۳. استخراج خطوط مترو
       final linesRaw = stationInfo['lines'] as List<dynamic>? ?? [];
       stationsLines[stationKey] = linesRaw.map((e) => e as int).toList();
 
-      // ۳. استخراج اتصالات و همسایه‌ها
+      // ۴. استخراج اتصالات و محاسبه زمان بر اساس فاصله
       final relations = stationInfo['relations'] as List<dynamic>? ?? [];
       final Map<String, int> connections = {};
+      
+      final startCoord = coords[stationKey]!;
+      
       for (var relation in relations) {
-        connections[relation.toString()] = 2; // زمان تقریبی ۲ دقیقه
+        final targetKey = relation.toString();
+        final endCoord = coords[targetKey];
+        
+        int duration = 2; // مقدار پیش‌فرض ۲ دقیقه
+        
+        if (endCoord != null && startCoord.isValid && endCoord.isValid) {
+          final distanceKm = _calculateDistance(
+            startCoord.lat, startCoord.lon, 
+            endCoord.lat, endCoord.lon
+          );
+          
+          // میانگین سرعت مترو با احتساب توقف‌ها: ۴۰ کیلومتر بر ساعت
+          // زمان (دقیقه) = (مسافت / سرعت) * ۶۰
+          // زمان = مسافت * ۱.۵
+          // اضافه کردن ۰.۵ دقیقه برای زمان توقف در ایستگاه
+          duration = (distanceKm * 1.5 + 0.5).round();
+          if (duration < 1) duration = 1; // حداقل ۱ دقیقه
+        }
+        
+        connections[targetKey] = duration;
       }
 
       nodes[stationKey] = connections;
@@ -54,7 +85,7 @@ Future<void> main() async {
       "lastUpdated": DateTime.now().toUtc().toIso8601String(),
       "nodes": nodes,
       "stationsFa": stationsFa,
-      "stationsLines": stationsLines, // 👈 اضافه شدن به خروجی نهایی
+      "stationsLines": stationsLines,
     };
 
     final encoder = const JsonEncoder.withIndent('  ');
@@ -65,8 +96,23 @@ Future<void> main() async {
     await file.writeAsString(formattedJson, flush: true, encoding: utf8);
 
     print('استخراج و تبدیل با موفقیت انجام شد!');
-    print('تست خطوط تجریش: ${stationsLines['Tajrish']}'); // خروجی باید [1] باشد
+    print('تعداد کل ایستگاه‌ها: ${stationsFa.length}');
   } catch (e) {
     print('خطایی رخ داد: $e');
   }
+}
+
+class _Coord {
+  final double lat;
+  final double lon;
+  _Coord(this.lat, this.lon);
+  bool get isValid => lat != 0.0 && lon != 0.0;
+}
+
+double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+  const p = 0.017453292519943295; // Math.PI / 180
+  final a = 0.5 - cos((lat2 - lat1) * p) / 2 +
+      cos(lat1 * p) * cos(lat2 * p) *
+      (1 - cos((lon2 - lon1) * p)) / 2;
+  return 12742 * asin(sqrt(a)); // 2 * R; R = 6371 km
 }

@@ -20,53 +20,40 @@ class MetroRemoteDataSourceImpl implements MetroRemoteDataSource {
   @override
   Future<MetroGraphModel> downloadGraph() async {
     try {
-      print('🔵 DEBUG [DataSource]: شروع درخواست به سرور...');
+      // DEBUG log removed
 
       final response = await dio.get(url);
 
       if (response.statusCode == 200) {
-        print('🟢 DEBUG [DataSource]: پاسخ سرور دریافت شد. وضعیت: 200');
+        // DEBUG log removed
 
         Map<String, dynamic> jsonMap;
 
         if (response.data is String) {
-          print(
-            '🔵 DEBUG [DataSource]: تشخیص فرمت متنی خام (String). در حال رمزگشایی با استاندارد UTF-8...',
-          );
+          // DEBUG log removed
           jsonMap =
               json.decode(response.data as String) as Map<String, dynamic>;
         } else if (response.data is Map) {
-          print('🔵 DEBUG [DataSource]: تشخیص فرمت ساختاریافته (Map).');
+          // DEBUG log removed
           jsonMap = response.data as Map<String, dynamic>;
         } else {
           throw ServerException();
         }
 
-        print(
-          '🔵 DEBUG [DataSource]: در حال پارس کردن JSON به مدل ObjectBox...',
-        );
+        // DEBUG log removed
         final model = MetroGraphModel.fromJson(jsonMap);
 
-        print('🟢 DEBUG [DataSource]: تبدیل به مدل با موفقیت انجام شد.');
+        // DEBUG log removed
         return model;
       } else {
-        print(
-          '🔴 FATAL [DataSource]: سرور پاسخ نامعتبر داد. کد وضعیت: ${response.statusCode}',
-        );
+        // FATAL log removed
         throw ServerException();
       }
-    } on DioException catch (e) {
-      print('🔴 FATAL [Dio Network Error]: خطای ارتباطی Dio.');
-      print('نوع خطا: ${e.type}');
-      print('پیام خطا: ${e.message}');
-      if (e.response != null) {
-        print('دیتای خطای دریافتی از سرور: ${e.response?.data}');
-      }
+    } on DioException catch (_) {
+      // Network Error log removed
       throw ServerException();
-    } catch (e, stackTrace) {
-      print('🔴 FATAL [JSON Parse Error]: خطا در تبدیل داده به مدل.');
-      print('دلیل خطا: $e');
-      print('Stack: $stackTrace');
+    } catch (_) {
+      // JSON Parse Error log removed
       throw ServerException();
     }
   }
