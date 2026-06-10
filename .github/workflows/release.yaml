@@ -153,3 +153,48 @@ jobs:
           artifacts: "release-assets/*"
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ارسال فایل‌ها به پیام‌رسان بله
+        env:
+          BALE_TOKEN: ${{ secrets.BALE_TOKEN }}
+          BALE_CHAT_ID: ${{ secrets.BALE_CHAT_ID }}
+          # مسیر فایل‌های بیلد شده خود را بر اساس ساختار پروژه تنظیم کنید
+          APK_PATH: build/app/outputs/flutter-apk/app-release.apk
+          AAB_PATH: build/app/outputs/bundle/release/app-release.aab
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          echo "شروع فرآیند ارسال فایل‌ها به بله..."
+          
+          # تعریف تابع برای ارسال فایل جهت جلوگیری از تکرار کد (DRY)
+          send_to_bale() {
+            local file_path=$1
+            local file_type=$2
+            
+            if [ -f "$file_path" ]; then
+              echo "در حال ارسال فایل $file_type: $file_path"
+              
+              RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "https://tapi.bale.ai/bot${BALE_TOKEN}/sendDocument" \
+                -F "chat_id=${BALE_CHAT_ID}" \
+                -F "document=@${file_path}" \
+                -F "caption=نسخه جدید بیلد شد 🚀%0Aنوع: ${file_type}%0Aکامیت: ${COMMIT_MSG}")
+              
+              # جداسازی کد وضعیت HTTP از بدنه پاسخ
+              HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+              BODY=$(echo "$RESPONSE" | sed '$d')
+              
+              if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+                echo "✅ ارسال $file_type موفقیت‌آمیز بود. (Status: $HTTP_STATUS)"
+              else
+                echo "❌ خطا در ارسال $file_type. (Status: $HTTP_STATUS)"
+                echo "جزئیات خطا: $BODY"
+                exit 1 # توقف اکشن در صورت بروز خطای بحرانی
+              fi
+            else
+              echo "⚠️ فایل $file_type در مسیر مشخص شده یافت نشد: $file_path"
+            fi
+            echo "----------------------------------------"
+          }
+
+          # فراخوانی تابع برای ارسال هر دو فرمت خروجی
+          send_to_bale "$APK_PATH" "APK"
+          send_to_bale "$AAB_PATH" "AAB"

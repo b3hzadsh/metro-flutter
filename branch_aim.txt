@@ -7,3 +7,36 @@
 - fix duration to next station 
 
 gemini --resume "e790ba66-67c0-4e1f-8f1b-fd7a52c6d247" 
+
+
+  # ----------------------------------------------------------------------
+  # 9. Publish to Café Bazaar (only on real tags)
+  # ----------------------------------------------------------------------
+  publish-cafebazaar:
+    needs: build-android
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      # Download only the App Bundle artifact for Café Bazaar
+      - name: Download App Bundle Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: appbundle-release
+          path: build/app/outputs/bundle/release/
+
+      - name: Upload to Café Bazaar
+        uses: matinzd/cafebazaar-release@v1
+        with:
+          cafebazaar-pishkhaan-api-secret: ${{ secrets.CAFEBAZAAR_API_SECRET }}
+          app_file: build/app/outputs/bundle/release/app-release.aab
+          auto_publish: true # Set to false if you want the release saved as a draft instead
+          changelog_fa: |
+            مسیریاب مترو تهران منتشر شد!
+            
+            تغییرات نسخه:
+            - بهبود عملکرد
+            - رفع باگ های جزئی
+            - اضافه شدن ویژگی جدید
+
+K
